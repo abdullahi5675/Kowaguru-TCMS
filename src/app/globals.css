@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f9fafb;
+  --foreground: #111827;
+  --primary: #A80012;
+  --primary-hover: #80000a;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --accent-success: #059669;
+  --accent-warning: #d97706;
+  --accent-danger: #dc2626;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --transition-all: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-lg: 12px;
+  --radius-md: 8px;
+}
+
+[data-theme='dark'] {
+  --background: #121212;
+  --foreground: #f3f4f6;
+  --card-bg: #1e1e1e;
+  --card-border: #2e2e2e;
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  transition: var(--transition-all);
+}
+
+/* Premium Layout Elements */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Glassmorphism Navigation */
+.nav-bar {
+  background: rgba(var(--card-bg), 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--card-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Custom Cards */
+.premium-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: var(--transition-all);
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Premium Buttons — explicit colors so they always show correctly */
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff !important;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: var(--transition-all);
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #374151 !important;
+  border: 1px solid #d1d5db;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: var(--transition-all);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme='dark'] .btn-secondary {
+  color: #e5e7eb !important;
+  border-color: #3f3f46;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Inputs and Forms */
+.input-field {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: var(--transition-all);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(168, 0, 18, 0.15);
+}
+
+.input-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 0.375rem;
+  letter-spacing: 0.05em;
+}
+
+/* Measurement Grid */
+.measurement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+/* ============================================
+   PRINT STYLES — Compact Single A4 Page
+   ============================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 8mm 8mm 8mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10px !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* The invoice container — fill the page, no scrolling */
+  .print-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: unset !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: block !important;
+    overflow: hidden !important;
+    page-break-inside: avoid;
+  }
+
+  /* Shrink spacing in print mode */
+  .print-page .space-y-6 > * + * {
+    margin-top: 6px !important;
+  }
+  .print-page p,
+  .print-page td,
+  .print-page th,
+  .print-page span {
+    font-size: 9px !important;
+    line-height: 1.3 !important;
+  }
+  .print-page h1 {
+    font-size: 14px !important;
+  }
+  .print-page h3 {
+    font-size: 9px !important;
+  }
+  .print-page .mb-6 {
+    margin-bottom: 6px !important;
+  }
+  .print-page .pb-6 {
+    padding-bottom: 6px !important;
+  }
+  .print-page .p-4 {
+    padding: 4px !important;
+  }
+  .print-page .p-8 {
+    padding: 0 !important;
+  }
+  .print-page .p-1\.5 {
+    padding: 2px !important;
+  }
+  .print-page img {
+    max-height: 80px !important;
+  }
+  .print-page .h-40 {
+    height: 80px !important;
+  }
+  .print-page .mt-8 {
+    margin-top: 8px !important;
+  }
+  .print-page .mb-8 {
+    margin-bottom: 8px !important;
+  }
+  .print-page .gap-12 {
+    gap: 20px !important;
+  }
+  .print-page .gap-6 {
+    gap: 6px !important;
+  }
+  .print-page .gap-4 {
+    gap: 4px !important;
+  }
+}

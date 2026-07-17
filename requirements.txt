@@ -1,0 +1,349 @@
+MJ TAILORING & TRAINING CENTER
+Customer Measurement & Tailoring Management Mobile Application
+Software Requirements Specification (SRS)
+Version: 1.0
+---
+1. Project Overview
+Project Name
+MJ Tailoring Customer Management System (MJ-TCMS)
+Client
+MJ Tailoring and Training Center
+Platform
+- Android Mobile Application
+- Future Web Dashboard (Optional)
+Purpose
+The application is designed to digitally manage customer information, body measurements, tailoring orders, payment records, product images, and collection reminders.
+The system replaces manual measurement books with a secure and searchable digital database that is simple enough for everyday use by tailoring staff.
+---
+2. Project Objectives
+The application shall enable staff to:
+- Register new customers.
+- Store customer measurements permanently.
+- Record tailoring orders.
+- Capture customer fabric/product images.
+- Track payment status.
+- Monitor collection dates.
+- Receive reminders for due collections.
+- Search customers quickly.
+- Print customer measurement sheets.
+---
+3. Target Users
+- Tailors
+- Receptionists
+- Store Managers
+- Business Owner
+---
+4. Application Modules
+A. Dashboard
+Displays:
+- Total Customers
+- Orders in Progress
+- Orders Ready
+- Orders Collected
+- Today's Due Collections
+- Outstanding Payments
+Quick Buttons
+- New Customer
+- Search Customer
+- Today's Collection
+- Reports
+---
+B. Customer Registration
+Personal Information
+- Customer Name
+- Phone Number
+- Alternate Phone Number (Optional)
+- Date of Submission
+- Address (Optional)
+- Notes (Optional)
+---
+C. Tailoring Order Information
+Product Type
+Dropdown List
+- Atamfa
+- Textile
+- Shadda
+- Material
+- Others
+If "Others" is selected
+Display text box
+«Specify Product Type»
+---
+Tailoring Style
+Free text
+Example
+- Gown
+- Skirt
+- Wrapper
+- Kaftan
+- Native Dress
+- Custom Design
+---
+Service Fee
+Currency
+₦_____
+---
+Payment Status
+Dropdown
+- Paid
+- Advance Payment
+- Not Paid
+If Advance Payment
+Display
+Amount Paid
+₦_____
+Balance
+₦_____
+Automatically calculated.
+---
+Expected Collection Date
+Calendar Picker
+---
+Order Status
+Dropdown
+- New
+- In Progress
+- Completed
+- Ready for Collection
+- Collected
+- Cancelled
+---
+5. Customer Measurements
+Vertical Measurements
+Measurement| Value
+ABL| __
+BP| __
+UBL| __
+WL| __
+LWL| __
+HL| __
+SKL| __
+SL| __
+GL| __
+---
+Horizontal Measurements
+Measurement| Value
+ABC| __
+BC| __
+UBC| __
+WC| __
+LWC| __
+HC| __
+N-N| __
+All measurements should accept decimal values.
+Example
+15
+15.5
+16.25
+---
+6. Product Image
+The application shall allow users to:
+Take Picture
+OR
+Choose From Gallery
+Store image together with the customer's order.
+Only one image is required for each order.
+---
+7. Customer Summary Page
+After saving an order, generate a professional summary page.
+The summary should contain:
+Business Logo
+MJ Tailoring and Training Center
+Customer Name
+Phone Number
+Order Number
+Submission Date
+Expected Collection Date
+Product Type
+Tailoring Style
+Measurement Table
+Service Fee
+Amount Paid
+Balance
+Payment Status
+Product Image
+Remarks
+QR Code (Optional Future Feature)
+Buttons
+- Print
+- Share as PDF
+- Edit
+- Save
+---
+8. Collection Reminder System
+The application shall automatically remind staff when customers' collection dates are approaching.
+Reminder Options
+Today
+Tomorrow
+Three Days Before
+Seven Days Before
+Reminder Dashboard
+Today's Collection (5)
+Tomorrow (3)
+Overdue Orders (2)
+Future Orders (15)
+Optional future feature
+Send SMS reminder to customers.
+---
+9. Customer Search
+Search by
+- Name
+- Phone Number
+- Order Number
+- Product Type
+Results should appear instantly.
+---
+10. Customer History
+Every customer profile shall display:
+Personal Information
+All Previous Orders
+Previous Measurements
+Payment History
+Collection History
+Images
+This allows returning customers to reuse previous measurements without taking them again.
+---
+11. Reports
+Generate reports such as:
+Daily Orders
+Weekly Orders
+Monthly Orders
+Completed Orders
+Pending Orders
+Outstanding Payments
+Collected Revenue
+Customer Count
+Export reports as PDF.
+---
+12. Settings
+Business Name
+Business Logo
+Business Address
+Phone Number
+Receipt Footer
+Measurement Units
+Backup Database
+Restore Database
+Dark Mode
+User Management (Future)
+---
+13. Notifications
+Dashboard notifications shall display:
+Orders Due Today
+Ready for Collection
+Overdue Collections
+Pending Payments
+Application Backup Reminder
+---
+14. Printing
+Printable customer summary should fit on A4 paper.
+Include:
+Business Header
+Customer Information
+Measurements
+Payment Details
+Product Image
+Collection Date
+Tailor Signature
+Customer Signature
+---
+15. Simple User Flow
+Dashboard
+↓
+New Customer
+↓
+Enter Customer Information
+↓
+Enter Measurements
+↓
+Capture Product Image
+↓
+Enter Payment
+↓
+Select Collection Date
+↓
+Save
+↓
+Generate Customer Summary
+↓
+Print or Share (Optional)
+↓
+Receive Collection Reminder
+---
+16. Database Structure
+Customer
+- Customer ID
+- Name
+- Phone Number
+- Alternate Phone
+- Address
+Order
+- Order ID
+- Customer ID
+- Product Type
+- Other Product
+- Tailoring Style
+- Submission Date
+- Collection Date
+- Service Fee
+- Payment Status
+- Amount Paid
+- Balance
+- Order Status
+- Product Image
+Measurements
+Vertical
+- ABL
+- BP
+- UBL
+- WL
+- LWL
+- HL
+- SKL
+- SL
+- GL
+Horizontal
+- ABC
+- BC
+- UBC
+- WC
+- LWC
+- HC
+- N-N
+---
+17. Future Enhancements
+- Customer SMS Notifications
+- WhatsApp Notifications
+- Multiple Product Images
+- Measurement History Comparison
+- Barcode/QR Code Orders
+- Online Backup
+- Cloud Synchronization
+- Customer Self-Service Portal
+- Multi-Branch Support
+- Staff Login & Roles
+- Sales Analytics Dashboard
+- Inventory/Fabric Management
+- Appointment Booking
+- Expense & Income Tracking
+---
+18. User Interface Design Principles
+The application should be:
+- Very simple and easy to learn.
+- Large buttons for quick operation.
+- Minimal typing with dropdown menus where possible.
+- Mobile-friendly.
+- Fast even on low-end Android devices.
+- Offline-first with optional cloud synchronization.
+- Clean, modern, and professional.
+---
+19. Expected Benefits
+- Eliminates paper measurement books.
+- Prevents loss of customer records.
+- Speeds up customer service.
+- Improves payment tracking.
+- Ensures timely order collection through reminders.
+- Provides professional printable measurement records.
+- Enhances customer satisfaction.
+- Supports future business growth and expansion.
+End of Document

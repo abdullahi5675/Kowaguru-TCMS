@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id             Int           @id @default(autoincrement())
+  name           String
+  phone          String
+  alternatePhone String?
+  address        String?
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  
+  orders         Order[]
+  measurements   Measurement[]
+}
+
+model Order {
+  id             Int           @id @default(autoincrement())
+  customerId     Int
+  customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  productType    String        // Atamfa, Textile, Shadda, Material, Others
+  otherProduct   String?       // Text specified if "Others" is selected
+  tailoringStyle String        // Gown, Skirt, Wrapper, etc.
+  
+  submissionDate DateTime      @default(now())
+  collectionDate DateTime      // Expected collection date
+  
+  serviceFee     Decimal       @db.Decimal(10, 2)
+  paymentStatus  String        // Paid, Advance Payment, Not Paid
+  amountPaid     Decimal       @default(0) @db.Decimal(10, 2)
+  balance        Decimal       @default(0) @db.Decimal(10, 2)
+  
+  orderStatus    String        // New, In Progress, Completed, Ready for Collection, Collected, Cancelled
+  productImage   String?       // URL/path to fabric image
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  
+  measurements   Measurement[]
+}
+
+model Measurement {
+  id         Int       @id @default(autoincrement())
+  customerId Int
+  customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  orderId    Int?
+  order      Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  
+  // Vertical Measurements
+  abl        Decimal?  @db.Decimal(6, 2) // ABL
+  bp         Decimal?  @db.Decimal(6, 2) // BP
+  ubl        Decimal?  @db.Decimal(6, 2) // UBL
+  wl         Decimal?  @db.Decimal(6, 2) // WL
+  lwl        Decimal?  @db.Decimal(6, 2) // LWL
+  hl         Decimal?  @db.Decimal(6, 2) // HL
+  skl        Decimal?  @db.Decimal(6, 2) // SKL
+  sl         Decimal?  @db.Decimal(6, 2) // SL
+  gl         Decimal?  @db.Decimal(6, 2) // GL
+  
+  // Horizontal Measurements
+  abc        Decimal?  @db.Decimal(6, 2) // ABC
+  bc         Decimal?  @db.Decimal(6, 2) // BC
+  ubc        Decimal?  @db.Decimal(6, 2) // UBC
+  wc         Decimal?  @db.Decimal(6, 2) // WC
+  lwc        Decimal?  @db.Decimal(6, 2) // LWC
+  hc         Decimal?  @db.Decimal(6, 2) // HC
+  nn         Decimal?  @db.Decimal(6, 2) // N-N
+  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Settings {
+  id              Int     @id @default(1)
+  businessName    String  @default("MJ Tailoring & Training Center")
+  businessLogo    String?
+  businessAddress String?
+  phone           String?
+  receiptFooter   String? @default("Thank you for your patronage!")
+  measurementUnit String  @default("inches") // inches, cm
+}
