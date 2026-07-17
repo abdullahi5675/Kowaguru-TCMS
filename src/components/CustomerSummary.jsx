@@ -27,12 +27,16 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
   };
 
   const handleShare = async () => {
+    // Generate public receipt URL based on the current origin
+    const origin = window.location.origin;
+    const receiptUrl = `${origin}/receipt/${order.id}`;
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: `Order Summary #${order.id} - ${customer.name}`,
           text: `Tailoring Invoice details for ${customer.name}. Product Type: ${order.productType}, Style: ${order.tailoringStyle}. Outstanding Balance: ₦${(parseFloat(order.balance) || 0).toLocaleString()}`,
-          url: window.location.href
+          url: receiptUrl
         });
       } catch (err) {
         console.error('Error sharing:', err);

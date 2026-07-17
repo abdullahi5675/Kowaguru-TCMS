@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     let settings = await prisma.settings.findUnique({
-      where: { id: 1 },
+      where: { userId },
     });
 
     if (!settings) {
       settings = await prisma.settings.create({
         data: {
-          id: 1,
+          userId,
           businessName: "Kowaguru TCMS",
           receiptFooter: "Thank you for your patronage!",
           measurementUnit: "inches"
@@ -30,11 +33,14 @@ export async function GET() {
 
 export async function PUT(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const data = await request.json();
     
-    // We only ever update the single settings row with ID 1
+    // We update or create settings specifically for this user
     const settings = await prisma.settings.upsert({
-      where: { id: 1 },
+      where: { userId },
       update: {
         businessName: data.businessName,
         businessLogo: data.businessLogo,
@@ -44,7 +50,7 @@ export async function PUT(request) {
         measurementUnit: data.measurementUnit,
       },
       create: {
-        id: 1,
+        userId,
         businessName: data.businessName || "Kowaguru TCMS",
         businessLogo: data.businessLogo,
         businessAddress: data.businessAddress,

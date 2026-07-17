@@ -11,8 +11,26 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  shopName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customers    Customer[]
+  settings     Settings?
+  orders       Order[]
+  measurements Measurement[]
+}
+
 model Customer {
   id             Int           @id @default(autoincrement())
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   name           String
   phone          String
   alternatePhone String?
@@ -27,6 +45,9 @@ model Customer {
 
 model Order {
   id             Int           @id @default(autoincrement())
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   customerId     Int
   customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   
@@ -53,6 +74,9 @@ model Order {
 
 model Measurement {
   id         Int       @id @default(autoincrement())
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   customerId Int
   customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   orderId    Int?
@@ -83,7 +107,10 @@ model Measurement {
 }
 
 model Settings {
-  id              Int     @id @default(1)
+  id              Int     @id @default(autoincrement())
+  userId          Int     @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   businessName    String  @default("MJ Tailoring & Training Center")
   businessLogo    String?
   businessAddress String?

@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function PUT(request, { params }) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { id: rawId } = await params;
     const id = parseInt(rawId);
     const data = await request.json();
@@ -25,7 +28,7 @@ export async function PUT(request, { params }) {
 
     // Fetch original order to handle updates safely
     const originalOrder = await prisma.order.findUnique({
-      where: { id }
+      where: { id, userId }
     });
 
     if (!originalOrder) {
@@ -38,7 +41,7 @@ export async function PUT(request, { params }) {
     const balance = fee - paid;
 
     const updatedOrder = await prisma.order.update({
-      where: { id },
+      where: { id, userId },
       data: {
         productType: productType || undefined,
         otherProduct: otherProduct !== undefined ? otherProduct : undefined,
@@ -66,6 +69,9 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { id: rawId } = await params;
     const id = parseInt(rawId);
 
@@ -74,7 +80,7 @@ export async function DELETE(request, { params }) {
     }
 
     await prisma.order.delete({
-      where: { id }
+      where: { id, userId }
     });
 
     return NextResponse.json({ success: true, message: 'Order deleted successfully.' });

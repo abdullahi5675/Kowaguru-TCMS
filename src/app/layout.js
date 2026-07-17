@@ -7,8 +7,15 @@ const outfit = Outfit({
 });
 
 export const metadata = {
-  title: "Kowaguru TCMS | Tailoring Customer Management System",
-  description: "Kowaguru TCMS — Digital customer measurements, orders, and tailoring management application for professional tailors.",
+  title: "Kowaguru TCMS",
+  description: "Tailoring Shop Management System",
+  manifest: "/manifest.json",
+  themeColor: "#2563eb",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Kowaguru TCMS",
+  },
 };
 
 export default function RootLayout({ children }) {

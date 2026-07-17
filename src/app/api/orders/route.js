@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const payment = searchParams.get('payment');
@@ -10,6 +13,7 @@ export async function GET(request) {
 
     const orders = await prisma.order.findMany({
       where: {
+        userId,
         orderStatus: status || undefined,
         paymentStatus: payment || undefined,
       },
@@ -30,6 +34,9 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const data = await request.json();
     
     const {
@@ -58,6 +65,7 @@ export async function POST(request) {
       // 1. Create the order
       const order = await tx.order.create({
         data: {
+          userId,
           customerId: parseInt(customerId),
           productType,
           otherProduct,
@@ -80,6 +88,7 @@ export async function POST(request) {
 
         createdMeasurements = await tx.measurement.create({
           data: {
+            userId,
             customerId: parseInt(customerId),
             orderId: order.id,
             // Vertical

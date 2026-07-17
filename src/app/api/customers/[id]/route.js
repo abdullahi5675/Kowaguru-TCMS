@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request, { params }) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const id = parseInt(params.id);
 
     if (isNaN(id)) {
@@ -10,7 +13,7 @@ export async function GET(request, { params }) {
     }
 
     const customer = await prisma.customer.findUnique({
-      where: { id },
+      where: { id, userId },
       include: {
         orders: {
           orderBy: { submissionDate: 'desc' }
@@ -34,6 +37,9 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const id = parseInt(params.id);
     const data = await request.json();
 
@@ -42,7 +48,7 @@ export async function PUT(request, { params }) {
     }
 
     const customer = await prisma.customer.update({
-      where: { id },
+      where: { id, userId },
       data: {
         name: data.name,
         phone: data.phone,
@@ -61,6 +67,9 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const id = parseInt(params.id);
 
     if (isNaN(id)) {
@@ -69,7 +78,7 @@ export async function DELETE(request, { params }) {
 
     // Cascade delete is supported at schema layer
     await prisma.customer.delete({
-      where: { id }
+      where: { id, userId }
     });
 
     return NextResponse.json({ success: true, message: 'Customer record deleted successfully.' });

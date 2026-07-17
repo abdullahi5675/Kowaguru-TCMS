@@ -3,19 +3,25 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('query') || '';
 
     // Search by name, phone, alternate phone, or check orders/measurements
     const customers = await prisma.customer.findMany({
-      where: query ? {
+      where: {
+        userId,
+        ...(query ? {
         OR: [
           { name: { contains: query, mode: 'insensitive' } },
           { phone: { contains: query } },
           { alternatePhone: { contains: query } },
           { address: { contains: query, mode: 'insensitive' } },
         ]
-      } : undefined,
+      } : {})
+      },
       include: {
         orders: {
           orderBy: { submissionDate: 'desc' }
@@ -39,6 +45,9 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const data = await request.json();
     
     const {
@@ -60,6 +69,7 @@ export async function POST(request) {
       // 1. Create customer
       const customer = await tx.customer.create({
         data: {
+          userId,
           name,
           phone,
           alternatePhone,
@@ -79,6 +89,7 @@ export async function POST(request) {
 
         createdOrder = await tx.order.create({
           data: {
+            userId,
             customerId: customer.id,
             productType: order.productType,
             otherProduct: order.otherProduct,
@@ -100,6 +111,7 @@ export async function POST(request) {
           
           createdMeasurements = await tx.measurement.create({
             data: {
+              userId,
               customerId: customer.id,
               orderId: createdOrder.id,
               // Vertical
