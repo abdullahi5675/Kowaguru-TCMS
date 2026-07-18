@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
@@ -16,12 +19,13 @@ export async function GET() {
       newCount,
       allOrders
     ] = await prisma.$transaction([
-      prisma.customer.count(),
-      prisma.order.count({ where: { orderStatus: 'In Progress' } }),
-      prisma.order.count({ where: { orderStatus: 'Ready for Collection' } }),
-      prisma.order.count({ where: { orderStatus: 'Collected' } }),
-      prisma.order.count({ where: { orderStatus: 'New' } }),
+      prisma.customer.count({ where: { userId } }),
+      prisma.order.count({ where: { userId, orderStatus: 'In Progress' } }),
+      prisma.order.count({ where: { userId, orderStatus: 'Ready for Collection' } }),
+      prisma.order.count({ where: { userId, orderStatus: 'Collected' } }),
+      prisma.order.count({ where: { userId, orderStatus: 'New' } }),
       prisma.order.findMany({
+        where: { userId },
         include: { customer: true }
       })
     ]);

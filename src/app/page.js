@@ -283,24 +283,25 @@ export default function Home() {
       
       {/* 1. TOP HEADER (no-print) */}
       <header className="nav-bar shadow-sm px-6 py-4 no-print flex justify-between items-center bg-white dark:bg-zinc-800">
-        <Logo
-          variant="horizontal"
-          size={42}
-          logoUrl={businessSettings?.businessLogo || null}
-          businessName={businessSettings?.businessName || null}
-        />
         
-        {/* Business name display (right side) */}
+        {/* Left Side: Logo and Business Name */}
         <div className="flex items-center gap-3">
-          <div className="hidden sm:block text-right">
-            <p className="text-sm font-bold text-gray-800 dark:text-gray-100">
-              {businessSettings?.businessName || "Kowaguru TCMS"}
-            </p>
-            <p className="text-[10px] text-gray-400 font-medium">TCMS Dashboard</p>
-          </div>
+          <Logo
+            variant="icon"
+            size={42}
+            logoUrl={businessSettings?.businessLogo || null}
+            businessName={businessSettings?.businessName || null}
+          />
+          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 hidden sm:block">
+            {businessSettings?.businessName || "Kowaguru TCMS"}
+          </h1>
+        </div>
+        
+        {/* Right Side: Log Out */}
+        <div className="flex items-center">
           <button 
             onClick={handleLogout} 
-            className="text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-700 transition-colors ml-2 sm:ml-4 border border-red-200 dark:border-red-900/50 px-3 py-1.5 rounded-lg"
+            className="text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-700 transition-colors border border-red-200 dark:border-red-900/50 px-4 py-1.5 rounded-lg"
           >
             Log out
           </button>
@@ -507,6 +508,11 @@ export default function Home() {
 
         </main>
       </div>
+
+      {/* 4. SOFTWARE FOOTER */}
+      <footer className="w-full text-center py-4 text-xs font-semibold text-gray-400 no-print">
+        Powered by Kowaguru TCMS © 2026
+      </footer>
     </div>
   );
 }

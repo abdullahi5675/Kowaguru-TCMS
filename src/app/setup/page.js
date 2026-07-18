@@ -19,6 +19,17 @@ export default function SetupPage() {
     measurementUnit: 'inches',
   });
 
+  React.useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.registeredShopName && !form.businessName) {
+          setForm(prev => ({ ...prev, businessName: data.registeredShopName }));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));

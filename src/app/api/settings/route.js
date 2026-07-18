@@ -10,18 +10,23 @@ export async function GET(request) {
       where: { userId },
     });
 
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { shopName: true }
+    });
+
     if (!settings) {
       settings = await prisma.settings.create({
         data: {
           userId,
-          businessName: "Kowaguru TCMS",
+          businessName: user?.shopName || "Kowaguru TCMS",
           receiptFooter: "Thank you for your patronage!",
           measurementUnit: "inches"
         },
       });
     }
 
-    return NextResponse.json(settings);
+    return NextResponse.json({ ...settings, registeredShopName: user?.shopName });
   } catch (error) {
     console.error('Error fetching settings:', error);
     return NextResponse.json(

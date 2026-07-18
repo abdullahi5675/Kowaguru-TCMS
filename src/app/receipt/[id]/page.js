@@ -52,8 +52,8 @@ export default async function ReceiptPage({ params }) {
         
         {/* Receipt Header */}
         <div className="bg-blue-600 px-6 py-8 text-center text-white print:bg-white print:text-black">
-          {settings?.businessLogo && (
-            <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-4">
+            {settings?.businessLogo ? (
               <div className="relative h-16 w-16 rounded-xl overflow-hidden bg-white/20 p-1 print:bg-transparent">
                 <Image
                   src={settings.businessLogo}
@@ -62,8 +62,28 @@ export default async function ReceiptPage({ params }) {
                   className="object-contain rounded-lg"
                 />
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-red-700 shadow-lg print:shadow-none">
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="32" 
+                  height="32" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="white" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <circle cx="6" cy="6" r="3" />
+                  <circle cx="6" cy="18" r="3" />
+                  <line x1="20" y1="4" x2="8.12" y2="15.88" />
+                  <line x1="14.47" y1="14.48" x2="20" y2="20" />
+                  <line x1="8.12" y1="8.12" x2="12" y2="12" />
+                </svg>
+              </div>
+            )}
+          </div>
           <h1 className="text-3xl font-extrabold tracking-tight">{businessName}</h1>
           {address && <p className="mt-1 text-blue-100 print:text-gray-600">{address}</p>}
           {phone && <p className="text-blue-100 print:text-gray-600">{phone}</p>}

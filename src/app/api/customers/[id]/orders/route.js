@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma';
 // POST /api/customers/[id]/orders — Add a new order to an existing customer
 export async function POST(request, { params }) {
   try {
+    const userId = parseInt(request.headers.get('x-user-id'), 10);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { id: rawId } = await params;
     const customerId = parseInt(rawId);
 
@@ -27,16 +30,17 @@ export async function POST(request, { params }) {
       measurements,
     } = data;
 
-    // Ensure customer exists
-    const customer = await prisma.customer.findUnique({ where: { id: customerId } });
+    // Ensure customer exists and belongs to the user
+    const customer = await prisma.customer.findUnique({ where: { id: customerId, userId } });
     if (!customer) {
-      return NextResponse.json({ error: 'Customer not found.' }, { status: 404 });
+      return NextResponse.json({ error: 'Customer not found or unauthorized.' }, { status: 404 });
     }
 
     const result = await prisma.$transaction(async (tx) => {
       // 1. Create the new order
       const order = await tx.order.create({
         data: {
+          userId,
           customerId,
           productType: productType || 'Atamfa',
           otherProduct: otherProduct || null,
@@ -63,6 +67,7 @@ export async function POST(request, { params }) {
 
         savedMeasurement = await tx.measurement.create({
           data: {
+            userId,
             customerId,
             orderId: order.id,
             ...mData
@@ -75,7 +80,7 @@ export async function POST(request, { params }) {
 
     // Return full order with customer details
     const fullOrder = await prisma.order.findUnique({
-      where: { id: result.order.id },
+      where: { id: result.order.id, userId },
       include: { customer: true, measurements: true }
     });
 
