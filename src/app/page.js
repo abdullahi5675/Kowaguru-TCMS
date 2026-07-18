@@ -126,6 +126,15 @@ export default function Home() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/auth/login';
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Save new customer (full form)
   const handleSaveCustomer = async (payload) => {
     try {
@@ -289,6 +298,12 @@ export default function Home() {
             </p>
             <p className="text-[10px] text-gray-400 font-medium">TCMS Dashboard</p>
           </div>
+          <button 
+            onClick={handleLogout} 
+            className="text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-700 transition-colors ml-2 sm:ml-4 border border-red-200 dark:border-red-900/50 px-3 py-1.5 rounded-lg"
+          >
+            Log out
+          </button>
         </div>
       </header>
 
