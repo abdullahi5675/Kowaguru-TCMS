@@ -6,11 +6,14 @@ const outfit = Outfit({
   variable: "--font-outfit",
 });
 
+export const viewport = {
+  themeColor: "#2563eb",
+};
+
 export const metadata = {
   title: "Kowaguru TCMS",
   description: "Tailoring Shop Management System",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
