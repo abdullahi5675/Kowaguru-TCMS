@@ -292,7 +292,7 @@ export default function Home() {
             logoUrl={businessSettings?.businessLogo || null}
             businessName={(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
           />
-          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 hidden sm:block">
+          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 block">
             {(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
           </h1>
         </div>
