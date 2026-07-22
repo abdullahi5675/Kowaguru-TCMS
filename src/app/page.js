@@ -290,10 +290,10 @@ export default function Home() {
             variant="icon"
             size={42}
             logoUrl={businessSettings?.businessLogo || null}
-            businessName={businessSettings?.businessName || null}
+            businessName={(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
           />
           <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 hidden sm:block">
-            {businessSettings?.businessName || "Kowaguru TCMS"}
+            {(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
           </h1>
         </div>
         

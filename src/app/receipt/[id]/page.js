@@ -55,11 +55,10 @@ export default async function ReceiptPage({ params }) {
           <div className="flex justify-center mb-4">
             {settings?.businessLogo ? (
               <div className="relative h-16 w-16 rounded-xl overflow-hidden bg-white/20 p-1 print:bg-transparent">
-                <Image
+                <img
                   src={settings.businessLogo}
                   alt="Business Logo"
-                  fill
-                  className="object-contain rounded-lg"
+                  className="w-full h-full object-contain rounded-lg"
                 />
               </div>
             ) : (

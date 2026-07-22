@@ -119,7 +119,12 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
           {/* HEADER */}
           <div className="flex justify-between items-start border-b pb-6 mb-6" style={{ borderColor: '#e5e7eb' }}>
             <div>
-              <Logo variant="horizontal" size={60} />
+              <Logo 
+                variant="horizontal" 
+                size={60} 
+                logoUrl={settings.businessLogo} 
+                businessName={settings.businessName} 
+              />
               <p className="text-xs text-gray-500 mt-2 font-medium" style={{ maxWidth: '300px' }}>
                 {settings.businessAddress}
               </p>
