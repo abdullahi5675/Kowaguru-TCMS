@@ -1,7 +1,6 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import PwaInstallPrompt from "@/components/PwaInstallPrompt";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -29,10 +28,22 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${outfit.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <PwaInstallPrompt />
-        <ServiceWorkerRegister />
       </body>
     </html>
   );
