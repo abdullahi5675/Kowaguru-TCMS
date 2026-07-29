@@ -1,6 +1,7 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import PwaInstallPrompt from "@/components/PwaInstallPrompt";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
         {children}
         <PwaInstallPrompt />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
