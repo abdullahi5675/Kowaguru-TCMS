@@ -33,6 +33,13 @@ export async function middleware(request) {
       return NextResponse.redirect(new URL('/', request.url));
     }
     
+    // Protect super-admin route
+    if (payload && pathname.startsWith('/super-admin')) {
+      if (payload.role !== 'SUPER_ADMIN') {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+    }
+    
     // Pass user ID to API routes via headers if valid
     if (payload && pathname.startsWith('/api')) {
       const requestHeaders = new Headers(request.headers);

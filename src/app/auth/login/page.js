@@ -49,15 +49,41 @@ export default function LoginPage() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link href="/auth/register" className="font-medium text-red-700 hover:text-red-600">
-            create a new tailoring shop account
-          </Link>
-        </p>
       </div>
 
-      <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md text-center">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-red-50 py-6 px-4 rounded-2xl border border-red-100 text-center mb-6">
+          <h3 className="text-lg font-bold text-red-900 mb-2">Want to use Kowaguru TCMS?</h3>
+          <p className="text-sm text-red-800 mb-4">
+            Gain full access to the ultimate tailoring management system.
+          </p>
+          <div className="bg-white rounded-xl p-4 mb-4 text-left">
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-medium text-gray-700">Jigawa State Businesses:</span>
+              <span className="font-bold text-gray-900">₦10,000</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-gray-700">Kano, Abuja & Others:</span>
+              <span className="font-bold text-gray-900">₦30,000</span>
+            </div>
+          </div>
+          <p className="text-xs text-red-700 mb-4">
+            Transfer to: <strong>GTBank - Kowaguru Tech - 0123456789</strong><br/>
+            (Please update bank details)
+          </p>
+          <a
+            href="https://wa.me/2340000000000?text=Hello%21%20I%20just%20paid%20for%20Kowaguru%20TCMS.%20Here%20is%20my%20receipt..."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center w-full gap-2 bg-green-600 text-white px-4 py-3 rounded-xl text-sm font-bold hover:bg-green-700 transition-colors shadow-md"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            Send Receipt on WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <a 
           href="/kowaguru-tcms.apk" 
           download
