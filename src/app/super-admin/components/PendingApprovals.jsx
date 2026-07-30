@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function PendingApprovals({ initialRequests }) {
+  const router = useRouter();
   const [requests, setRequests] = useState(initialRequests);
   const [loadingId, setLoadingId] = useState(null);
   const [error, setError] = useState("");
@@ -26,7 +28,14 @@ export default function PendingApprovals({ initialRequests }) {
 
       // Remove from list
       setRequests(requests.filter((r) => r.id !== request.id));
-      alert(`Account created! Login details have been emailed to ${request.email}`);
+      router.refresh(); // Refresh the server component stats and lists
+      
+      if (data.message) {
+         // E.g., email failed but user created
+         alert(data.message);
+      } else {
+         alert(`Account created! Login details have been emailed to ${request.email}`);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -48,6 +57,7 @@ export default function PendingApprovals({ initialRequests }) {
       if (!res.ok) throw new Error("Failed to reject");
 
       setRequests(requests.filter((r) => r.id !== id));
+      router.refresh(); // Refresh the server component stats and lists
     } catch (err) {
       setError(err.message);
     } finally {

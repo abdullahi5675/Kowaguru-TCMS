@@ -16,10 +16,19 @@ export default function LoginPage() {
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
-      // Stash the event so it can be triggered later.
       setDeferredPrompt(e);
+      
+      // Automatically prompt the user to install
+      setTimeout(() => {
+        e.prompt();
+        e.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          }
+          setDeferredPrompt(null);
+        });
+      }, 1000); // 1 second delay to let page load first
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);

@@ -4,14 +4,13 @@ import bcrypt from 'bcryptjs';
 import { verifyToken } from '@/lib/auth';
 import nodemailer from 'nodemailer';
 
-// Email transporter setup
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '465'),
   secure: true,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.SMTP_USER || 'kowaguru.info@gmail.com',
+    pass: process.env.SMTP_PASS || 'manx heps arcm clcy',
   },
 });
 
@@ -88,7 +87,7 @@ export async function POST(request) {
     // Send Welcome Email
     try {
       await transporter.sendMail({
-        from: `"Kowaguru TCMS" <${process.env.SMTP_USER}>`,
+        from: `"Kowaguru TCMS" <${process.env.SMTP_USER || 'kowaguru.info@gmail.com'}>`,
         to: paymentRequest.email,
         subject: 'Welcome to Kowaguru TCMS - Your Login Details',
         html: `
