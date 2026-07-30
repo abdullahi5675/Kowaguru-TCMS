@@ -12,7 +12,7 @@ export async function GET(request) {
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { shopName: true }
+      select: { shopName: true, email: true }
     });
 
     if (!settings) {
@@ -26,7 +26,7 @@ export async function GET(request) {
       });
     }
 
-    return NextResponse.json({ ...settings, registeredShopName: user?.shopName });
+    return NextResponse.json({ ...settings, registeredShopName: user?.shopName, email: user?.email });
   } catch (error) {
     console.error('Error fetching settings:', error);
     return NextResponse.json(
@@ -43,6 +43,23 @@ export async function PUT(request) {
 
     const data = await request.json();
     
+    // Update the email in the User model if provided
+    if (data.email) {
+      // Check if email is already taken by another user
+      const existingEmail = await prisma.user.findUnique({
+        where: { email: data.email }
+      });
+      
+      if (existingEmail && existingEmail.id !== userId) {
+        return NextResponse.json({ error: 'This email is already in use by another account.' }, { status: 400 });
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { email: data.email }
+      });
+    }
+
     // We update or create settings specifically for this user
     const settings = await prisma.settings.upsert({
       where: { userId },
@@ -65,7 +82,7 @@ export async function PUT(request) {
       },
     });
 
-    return NextResponse.json(settings);
+    return NextResponse.json({ ...settings, email: data.email });
   } catch (error) {
     console.error('Error updating settings:', error);
     return NextResponse.json({ error: 'Failed to update settings.' }, { status: 500 });

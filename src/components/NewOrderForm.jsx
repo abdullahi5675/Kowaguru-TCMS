@@ -248,7 +248,7 @@ export default function NewOrderForm({ customer, onBack, onSave }) {
             <label className="btn-secondary flex items-center gap-2 cursor-pointer">
               <Camera size={16} />
               {imagePreview ? 'Change Photo' : 'Upload Style Photo'}
-              <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+              <input type="file" accept="image/*" capture="environment" onChange={handleImageChange} className="hidden" />
             </label>
           </div>
         </div>

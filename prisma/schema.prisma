@@ -119,3 +119,14 @@ model Settings {
   receiptFooter   String? @default("Thank you for your patronage!")
   measurementUnit String  @default("inches") // inches, cm
 }
+
+model PaymentRequest {
+  id         Int      @id @default(autoincrement())
+  shopName   String
+  email      String   @unique
+  state      String
+  receiptUrl String
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

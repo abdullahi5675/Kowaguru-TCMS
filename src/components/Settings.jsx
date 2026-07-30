@@ -210,18 +210,34 @@ export default function Settings({ initialSettings = null, onSaveSettings }) {
               </div>
             </div>
 
-            <div>
-              <label className="input-label" htmlFor="businessName">Business / Shop Name</label>
-              <input
-                id="businessName"
-                type="text"
-                name="businessName"
-                value={settings.businessName}
-                onChange={handleInputChange}
-                className="input-field font-bold"
-                placeholder="Enter your shop or business name"
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="input-label" htmlFor="businessName">Business / Shop Name</label>
+                <input
+                  id="businessName"
+                  type="text"
+                  name="businessName"
+                  value={settings.businessName}
+                  onChange={handleInputChange}
+                  className="input-field font-bold"
+                  placeholder="Enter your shop or business name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="input-label" htmlFor="email">Login Email Address</label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={settings.email || ''}
+                  onChange={handleInputChange}
+                  className="input-field"
+                  placeholder="tailor@example.com"
+                  required
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

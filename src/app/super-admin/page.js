@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import ClientList from "./components/ClientList";
+import PendingApprovals from "./components/PendingApprovals";
+import SuperAdminTabs from "./components/SuperAdminTabs";
 
 export const metadata = {
   title: "Super Admin | Kowaguru TCMS",
@@ -35,6 +37,12 @@ export default async function SuperAdminPage() {
       createdAt: "desc",
     },
   });
+  
+  // Fetch pending payment requests
+  const pendingRequests = await prisma.paymentRequest.findMany({
+    where: { status: 'PENDING' },
+    orderBy: { createdAt: "desc" },
+  });
 
   const totalClients = clients.length;
   // A simple revenue calculation assuming each client paid 10,000 as a placeholder for now
@@ -47,7 +55,7 @@ export default async function SuperAdminPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Super Admin Dashboard</h1>
             <p className="mt-2 text-sm text-gray-600">
-              Manage Kowaguru TCMS clients and generate accounts.
+              Manage Kowaguru TCMS clients and approve payment requests.
             </p>
           </div>
         </div>
@@ -89,9 +97,30 @@ export default async function SuperAdminPage() {
               </div>
             </div>
           </div>
+          
+          <div className="bg-white overflow-hidden shadow-sm rounded-xl border border-yellow-300">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
+                  <svg className="h-6 w-6 text-yellow-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">Pending Approvals</dt>
+                    <dd className="text-2xl font-semibold text-gray-900">{pendingRequests.length}</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <ClientList initialClients={clients} />
+        <SuperAdminTabs 
+          initialClients={clients} 
+          initialRequests={pendingRequests} 
+        />
       </div>
     </div>
   );

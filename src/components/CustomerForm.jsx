@@ -496,6 +496,7 @@ export default function CustomerForm({ customer = null, onBack, onSave }) {
                   <input 
                     type="file" 
                     accept="image/*" 
+                    capture="environment"
                     onChange={handleImageChange}
                     className="hidden"
                   />

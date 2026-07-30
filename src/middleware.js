@@ -10,6 +10,7 @@ export async function middleware(request) {
                         pathname.startsWith('/receipt') || 
                         pathname === '/api/auth/login' || 
                         pathname === '/api/auth/register' ||
+                        pathname.startsWith('/api/public') ||
                         pathname.startsWith('/api/upload'); // temporarily public until we integrate Supabase Storage with tokens if needed
 
   if (!token && !isPublicRoute) {
