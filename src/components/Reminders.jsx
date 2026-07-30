@@ -152,7 +152,7 @@ export default function Reminders({ onSelectOrder }) {
               {/* Order Meta */}
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-[10px] font-extrabold text-gray-400 uppercase">Order #{order.id}</span>
+                  <span className="text-[10px] font-extrabold text-gray-400 uppercase">Order #{order.orderNumber || order.id}</span>
                   <h4 
                     onClick={() => onSelectOrder(order)}
                     className="text-base font-extrabold hover:underline cursor-pointer text-gray-800 dark:text-gray-100"

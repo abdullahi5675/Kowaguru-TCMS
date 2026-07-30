@@ -145,7 +145,7 @@ export default function CustomerDetails({ customer, onBack, onEdit, onAddOrder, 
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-extrabold text-gray-400 uppercase">Order #{order.id}</span>
+                      <span className="text-xs font-extrabold text-gray-400 uppercase">Order #{order.orderNumber || order.id}</span>
                       <span className="text-gray-300">|</span>
                       <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
                         {order.tailoringStyle} ({order.productType})

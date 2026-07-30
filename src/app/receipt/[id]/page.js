@@ -97,7 +97,7 @@ export default async function ReceiptPage({ params }) {
               <p className="text-gray-600">{order.customer.phone}</p>
             </div>
             <div className="text-right">
-              <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Order #{order.id}</p>
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Order #{order.orderNumber || order.id}</p>
               <p className="text-sm text-gray-600 mt-1">{formatDate(order.createdAt)}</p>
             </div>
           </div>

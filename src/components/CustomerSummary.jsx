@@ -34,7 +34,7 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Order Summary #${order.id} - ${customer.name}`,
+          title: `Order Summary #${order.orderNumber || order.id} - ${customer.name}`,
           text: `Tailoring Invoice details for ${customer.name}. Product Type: ${order.productType}, Style: ${order.tailoringStyle}. Outstanding Balance: ₦${(parseFloat(order.balance) || 0).toLocaleString()}`,
           url: receiptUrl
         });
@@ -48,25 +48,65 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
   };
 
   const measurementLabels = {
-    // Vertical
-    abl: 'ABL (Across Back Length)',
-    bp: 'BP (Bust Point)',
-    ubl: 'UBL (Under Bust Length)',
-    wl: 'WL (Waist Length)',
-    lwl: 'LWL (Low Waist Length)',
-    hl: 'HL (Hip Length)',
-    skl: 'SKL (Skirt Length)',
-    sl: 'SL (Sleeve Length)',
-    gl: 'GL (Gown Length)',
-    // Horizontal
-    abc: 'ABC (Across Back Chest)',
-    bc: 'BC (Bust Circumference)',
-    ubc: 'UBC (Under Bust Circumference)',
-    wc: 'WC (Waist Circumference)',
-    lwc: 'LWC (Low Waist Circumference)',
-    hc: 'HC (Hip Circumference)',
-    nn: 'N-N (Nipple to Nipple)'
+    Female: {
+      Vertical: {
+        abl: 'ABL (Across Back Length)',
+        bp: 'BP (Bust Point)',
+        ubl: 'UBL (Under Bust Length)',
+        wl: 'WL (Waist Length)',
+        lwl: 'LWL (Low Waist Length)',
+        hl: 'HL (Hip Length)',
+        skl: 'SKL (Skirt Length)',
+        sl: 'SL (Sleeve Length)',
+        gl: 'GL (Gown Length)',
+      },
+      Horizontal: {
+        abc: 'ABC (Across Back Chest)',
+        bc: 'BC (Bust Circumference)',
+        ubc: 'UBC (Under Bust Circumference)',
+        wc: 'WC (Waist Circumference)',
+        lwc: 'LWC (Low Waist Circumference)',
+        hc: 'HC (Hip Circumference)',
+        nn: 'N-N (Nipple to Nipple)',
+      }
+    },
+    Male: {
+      Core: {
+        fl: 'FL (Full Length)',
+        sw: 'SW (Shoulder to Waist)',
+        sk: 'SK (Shoulder to Knee)',
+        bl: 'BL (Back Length)',
+        cl: 'CL (Crotch Length)',
+      },
+      Round: {
+        n: 'N (Neck)',
+        s: 'S (Shoulder)',
+        c: 'C (Chest)',
+        st: 'ST (Stomach/Belly)',
+        w: 'W (Waist)',
+        h: 'H (Hip/Seat)',
+        ah: 'AH (Arm Hole)',
+        b: 'B (Bicep)',
+        wr: 'WR (Wrist)',
+      },
+      Specific: {
+        nw: 'NW (Neck Width)',
+        nd: 'ND (Neck Depth)',
+        sd: 'SD (Shoulder Drop)',
+        cw: 'CW (Chest Width)',
+        wd: 'WD (Waist Dart)',
+        so: 'SO (Sleeve Opening)',
+        pp: 'PP (Pocket Position)',
+        tw: 'TW (Trouser Waist)',
+        tl: 'TL (Trouser Length)',
+        tt: 'TT (Trouser Thigh)',
+        tk: 'TK (Trouser Knee)',
+        ta: 'TA (Trouser Ankle)',
+      }
+    }
   };
+
+  const isMale = latestM && (latestM.fl !== null || latestM.c !== null || latestM.n !== null);
 
   return (
     <div className="space-y-6">
@@ -81,7 +121,7 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
           </button>
           <div>
             <h2 className="text-xl font-bold">Order Invoice / Summary</h2>
-            <p className="text-sm text-gray-500">Order #{order.id} for {customer?.name}</p>
+            <p className="text-sm text-gray-500">Order #{order.orderNumber || order.id} for {customer?.name}</p>
           </div>
         </div>
 
@@ -133,7 +173,7 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
             
             <div className="text-right">
               <h1 className="text-xl font-extrabold text-red-700 tracking-wider">INVOICE / RECEIPT</h1>
-              <p className="text-xs text-gray-500 font-bold mt-1">ORDER ID: #{order.id}</p>
+              <p className="text-xs text-gray-500 font-bold mt-1">ORDER ID: #{order.orderNumber || order.id}</p>
               <p className="text-xs text-gray-500">Date: {new Date(order.submissionDate).toLocaleDateString()}</p>
               <p className="text-xs text-gray-500">Due Date: <span className="font-bold text-red-600">{new Date(order.collectionDate).toLocaleDateString()}</span></p>
             </div>
@@ -165,40 +205,96 @@ export default function CustomerSummary({ order, onBack, onEditOrder, businessSe
           {latestM && (
             <div className="mb-6">
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 border-b pb-1">Measurements Sheet ({settings.measurementUnit})</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Vertical */}
-                <div>
-                  <table className="w-full text-xs text-left">
-                    <thead>
-                      <tr className="bg-gray-100"><th className="p-1 font-bold">Vertical Field</th><th className="p-1 font-bold text-right">Value</th></tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(measurementLabels).slice(0, 9).map((key) => (
-                        <tr key={key} className="border-b" style={{ borderColor: '#f3f4f6' }}>
-                          <td className="p-1.5 text-gray-600">{measurementLabels[key]}</td>
-                          <td className="p-1.5 text-right font-bold">{latestM[key] ? `${latestM[key]}″` : '--'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              
+              {!isMale ? (
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Vertical */}
+                  <div>
+                    <table className="w-full text-xs text-left">
+                      <thead>
+                        <tr className="bg-gray-100"><th className="p-1 font-bold">Vertical Field</th><th className="p-1 font-bold text-right">Value</th></tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(measurementLabels.Female.Vertical).map((key) => (
+                          <tr key={key} className="border-b" style={{ borderColor: '#f3f4f6' }}>
+                            <td className="p-1.5 text-gray-600">{measurementLabels.Female.Vertical[key]}</td>
+                            <td className="p-1.5 text-right font-bold">{latestM[key] !== null ? `${latestM[key]}″` : '--'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {/* Horizontal */}
+                  <div>
+                    <table className="w-full text-xs text-left">
+                      <thead>
+                        <tr className="bg-gray-100"><th className="p-1 font-bold">Horizontal Field</th><th className="p-1 font-bold text-right">Value</th></tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(measurementLabels.Female.Horizontal).map((key) => (
+                          <tr key={key} className="border-b" style={{ borderColor: '#f3f4f6' }}>
+                            <td className="p-1.5 text-gray-600">{measurementLabels.Female.Horizontal[key]}</td>
+                            <td className="p-1.5 text-right font-bold">{latestM[key] !== null ? `${latestM[key]}″` : '--'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-                {/* Horizontal */}
-                <div>
-                  <table className="w-full text-xs text-left">
-                    <thead>
-                      <tr className="bg-gray-100"><th className="p-1 font-bold">Horizontal Field</th><th className="p-1 font-bold text-right">Value</th></tr>
-                    </thead>
-                    <tbody>
-                      {Object.keys(measurementLabels).slice(9).map((key) => (
-                        <tr key={key} className="border-b" style={{ borderColor: '#f3f4f6' }}>
-                          <td className="p-1.5 text-gray-600">{measurementLabels[key]}</td>
-                          <td className="p-1.5 text-right font-bold">{latestM[key] ? `${latestM[key]}″` : '--'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Core Body */}
+                    <div>
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="bg-gray-100"><th className="p-1 font-bold">Core Body</th><th className="p-1 font-bold text-right">Value</th></tr>
+                        </thead>
+                        <tbody>
+                          {Object.keys(measurementLabels.Male.Core).map((key) => (
+                            <tr key={key} className="border-b" style={{ borderColor: '#f3f4f6' }}>
+                              <td className="p-1.5 text-gray-600">{measurementLabels.Male.Core[key]}</td>
+                              <td className="p-1.5 text-right font-bold">{latestM[key] !== null ? `${latestM[key]}″` : '--'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {/* Round Measurements */}
+                    <div>
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="bg-gray-100"><th className="p-1 font-bold">Round Measurements</th><th className="p-1 font-bold text-right">Value</th></tr>
+                        </thead>
+                        <tbody>
+                          {Object.keys(measurementLabels.Male.Round).map((key) => (
+                            <tr key={key} className="border-b" style={{ borderColor: '#f3f4f6' }}>
+                              <td className="p-1.5 text-gray-600">{measurementLabels.Male.Round[key]}</td>
+                              <td className="p-1.5 text-right font-bold">{latestM[key] !== null ? `${latestM[key]}″` : '--'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  {/* Dress Specific */}
+                  <div>
+                    <table className="w-full text-xs text-left">
+                      <thead>
+                        <tr className="bg-gray-100"><th className="p-1 font-bold">Dress / Trouser Specific</th><th className="p-1 font-bold text-right">Value</th></tr>
+                      </thead>
+                      <tbody className="grid grid-cols-2">
+                        {Object.keys(measurementLabels.Male.Specific).map((key) => (
+                          <tr key={key} className="border-b flex justify-between px-2" style={{ borderColor: '#f3f4f6' }}>
+                            <td className="p-1.5 text-gray-600">{measurementLabels.Male.Specific[key]}</td>
+                            <td className="p-1.5 text-right font-bold">{latestM[key] !== null ? `${latestM[key]}″` : '--'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 

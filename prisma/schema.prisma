@@ -49,6 +49,8 @@ model Order {
   userId         Int
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  orderNumber    Int           @default(1) // Scoped per user (tailor)
+
   customerId     Int
   customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   
@@ -102,7 +104,39 @@ model Measurement {
   lwc        Decimal?  @db.Decimal(6, 2) // LWC
   hc         Decimal?  @db.Decimal(6, 2) // HC
   nn         Decimal?  @db.Decimal(6, 2) // N-N
-  
+
+  // Male Core Body
+  fl         Decimal?  @db.Decimal(6, 2) // Full Length
+  sw         Decimal?  @db.Decimal(6, 2) // Shoulder to Waist
+  sk         Decimal?  @db.Decimal(6, 2) // Shoulder to Knee
+  bl         Decimal?  @db.Decimal(6, 2) // Back Length
+  cl         Decimal?  @db.Decimal(6, 2) // Crotch Length
+
+  // Male Round Measurements
+  n          Decimal?  @db.Decimal(6, 2) // Neck
+  s          Decimal?  @db.Decimal(6, 2) // Shoulder
+  c          Decimal?  @db.Decimal(6, 2) // Chest
+  st         Decimal?  @db.Decimal(6, 2) // Stomach/Belly
+  w          Decimal?  @db.Decimal(6, 2) // Waist (Male)
+  h          Decimal?  @db.Decimal(6, 2) // Hip/Seat (Male)
+  ah         Decimal?  @db.Decimal(6, 2) // Arm Hole
+  b          Decimal?  @db.Decimal(6, 2) // Bicep
+  wr         Decimal?  @db.Decimal(6, 2) // Wrist
+
+  // Male Dress / Trouser Specific
+  nw         Decimal?  @db.Decimal(6, 2) // Neck Width
+  nd         Decimal?  @db.Decimal(6, 2) // Neck Depth
+  sd         Decimal?  @db.Decimal(6, 2) // Shoulder Drop
+  cw         Decimal?  @db.Decimal(6, 2) // Chest Width
+  wd         Decimal?  @db.Decimal(6, 2) // Waist Dart
+  so         Decimal?  @db.Decimal(6, 2) // Sleeve Opening
+  pp         Decimal?  @db.Decimal(6, 2) // Pocket Position
+  tw         Decimal?  @db.Decimal(6, 2) // Trouser Waist
+  tl         Decimal?  @db.Decimal(6, 2) // Trouser Length
+  tt         Decimal?  @db.Decimal(6, 2) // Trouser Thigh
+  tk         Decimal?  @db.Decimal(6, 2) // Trouser Knee
+  ta         Decimal?  @db.Decimal(6, 2) // Trouser Ankle
+
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }

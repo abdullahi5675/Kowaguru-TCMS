@@ -92,20 +92,16 @@ export default function RequestAccessForm() {
         Gain full access to the ultimate tailoring management system.
       </p>
       <div className="bg-white rounded-xl p-4 mb-4 text-left">
-        <div className="flex justify-between items-center border-b pb-2 mb-2">
-          <span className="font-medium text-gray-700">Jigawa State Businesses:</span>
-          <span className="font-bold text-gray-900">₦10,000</span>
-        </div>
         <div className="flex justify-between items-center">
-          <span className="font-medium text-gray-700">Kano, Abuja & Others:</span>
-          <span className="font-bold text-gray-900">₦30,000</span>
+          <span className="font-medium text-gray-700">Account Access Fee:</span>
+          <span className="font-bold text-gray-900">₦20,000</span>
         </div>
       </div>
       
       <div className="bg-red-50 p-4 rounded-xl mb-6 text-left border border-red-200">
         <h4 className="font-bold text-red-900 mb-2">Manual Payment Instructions</h4>
         <p className="text-sm text-red-800 mb-3">
-          Please transfer the exact amount for your state to the account below, then upload the receipt.
+          Please transfer exactly ₦20,000 to the account below, then upload the receipt.
         </p>
         <div className="bg-white p-3 rounded-lg border border-red-100 mb-3 text-sm">
           <div className="flex justify-between mb-1">
@@ -159,19 +155,6 @@ export default function RequestAccessForm() {
             className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-red-500 focus:border-red-500 sm:text-sm"
             placeholder="Where we will send your password"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Your State</label>
-          <select
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:ring-red-500 focus:border-red-500 sm:text-sm"
-          >
-            <option value="Jigawa">Jigawa State (₦10,000)</option>
-            <option value="Others">Kano, Abuja & Others (₦30,000)</option>
-          </select>
         </div>
 
         <div>

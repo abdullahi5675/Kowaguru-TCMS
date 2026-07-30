@@ -15,6 +15,10 @@ export const metadata = {
   title: "Kowaguru TCMS",
   description: "Tailoring Shop Management System",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/app-icon.png",
+    apple: "/app-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

@@ -158,7 +158,7 @@ export default function Dashboard({ stats, onNavigate, todayOrders = [], overdue
                   style={{ borderColor: 'var(--card-border)' }}
                 >
                   <div>
-                    <h4 className="text-sm font-bold text-gray-800 dark:text-gray-100">{order.customer?.name}</h4>
+                    <h4 className="text-sm font-bold text-gray-800 dark:text-gray-100">{order.customer?.name} (Order #{order.orderNumber || order.id})</h4>
                     <p className="text-xs text-gray-500">{order.tailoringStyle} - {order.productType}</p>
                   </div>
                   <div className="text-right">
@@ -202,7 +202,7 @@ export default function Dashboard({ stats, onNavigate, todayOrders = [], overdue
                   className="p-3 rounded-lg border border-red-100 bg-red-50/50 dark:bg-red-950/20 dark:border-red-900/30 flex justify-between items-center" 
                 >
                   <div>
-                    <h4 className="text-sm font-bold text-red-950 dark:text-red-200">{order.customer?.name}</h4>
+                    <h4 className="text-sm font-bold text-red-950 dark:text-red-200">{order.customer?.name} (Order #{order.orderNumber || order.id})</h4>
                     <p className="text-xs text-gray-500">
                       Due: {new Date(order.collectionDate).toLocaleDateString()}
                     </p>

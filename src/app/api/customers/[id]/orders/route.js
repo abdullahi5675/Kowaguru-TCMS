@@ -37,11 +37,19 @@ export async function POST(request, { params }) {
     }
 
     const result = await prisma.$transaction(async (tx) => {
+      // Determine next orderNumber for this user
+      const lastOrder = await tx.order.findFirst({
+        where: { userId },
+        orderBy: { orderNumber: 'desc' }
+      });
+      const nextOrderNumber = lastOrder ? lastOrder.orderNumber + 1 : 1;
+
       // 1. Create the new order
       const order = await tx.order.create({
         data: {
           userId,
           customerId,
+          orderNumber: nextOrderNumber,
           productType: productType || 'Atamfa',
           otherProduct: otherProduct || null,
           tailoringStyle: tailoringStyle || '',
@@ -59,7 +67,11 @@ export async function POST(request, { params }) {
       let savedMeasurement = null;
       if (measurements) {
         const mData = {};
-        const fields = ['abl', 'bp', 'ubl', 'wl', 'lwl', 'hl', 'skl', 'sl', 'gl', 'abc', 'bc', 'ubc', 'wc', 'lwc', 'hc', 'nn'];
+        const fields = [
+          'abl', 'bp', 'ubl', 'wl', 'lwl', 'hl', 'skl', 'sl', 'gl', 'abc', 'bc', 'ubc', 'wc', 'lwc', 'hc', 'nn', // Female
+          'fl', 'sw', 'sk', 'bl', 'cl', 'n', 's', 'c', 'st', 'w', 'h', 'ah', 'b', 'wr', // Male Core & Round
+          'nw', 'nd', 'sd', 'cw', 'wd', 'so', 'pp', 'tw', 'tl', 'tt', 'tk', 'ta' // Male Specific
+        ];
         fields.forEach(f => {
           const val = parseFloat(measurements[f]);
           mData[f] = !isNaN(val) && measurements[f] !== '' ? val : null;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Save, ArrowLeft, Loader2 } from 'lucide-react';
+import { compressImage } from '@/lib/imageCompression';
 
 export default function CustomerForm({ customer = null, onBack, onSave }) {
   const isEdit = !!customer;
@@ -30,11 +31,19 @@ export default function CustomerForm({ customer = null, onBack, onSave }) {
   });
 
   // 3. Measurements State
+  const [measurementType, setMeasurementType] = useState('Female');
   const [measurements, setMeasurements] = useState({
-    // Vertical
+    // Vertical Female
     abl: '', bp: '', ubl: '', wl: '', lwl: '', hl: '', skl: '', sl: '', gl: '',
-    // Horizontal
-    abc: '', bc: '', ubc: '', wc: '', lwc: '', hc: '', nn: ''
+    // Horizontal Female
+    abc: '', bc: '', ubc: '', wc: '', lwc: '', hc: '', nn: '',
+    
+    // Male Core Body
+    fl: '', sw: '', sk: '', bl: '', cl: '',
+    // Male Round
+    n: '', s: '', c: '', st: '', w: '', h: '', ah: '', b: '', wr: '',
+    // Male Dress Specific
+    nw: '', nd: '', sd: '', cw: '', wd: '', so: '', pp: '', tw: '', tl: '', tt: '', tk: '', ta: ''
   });
 
   // Photo state
@@ -60,6 +69,10 @@ export default function CustomerForm({ customer = null, onBack, onSave }) {
           mData[key] = latestM[key] !== null && latestM[key] !== undefined ? latestM[key].toString() : '';
         });
         setMeasurements(mData);
+        // Try to auto-detect if it was a male measurement (e.g. if 'fl' or 'c' has a value)
+        if (latestM.fl || latestM.c || latestM.n) {
+          setMeasurementType('Male');
+        }
       }
     }
   }, [customer]);
@@ -103,12 +116,21 @@ export default function CustomerForm({ customer = null, onBack, onSave }) {
     }
   };
 
-  // Handle image select
-  const handleImageChange = (e) => {
+  // Handle image select & compression
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      try {
+        // Show preview immediately with original file
+        setImagePreview(URL.createObjectURL(file));
+        // Compress the image before setting to state
+        const compressedFile = await compressImage(file, 1200, 1200, 0.7);
+        setImageFile(compressedFile);
+      } catch (err) {
+        console.error("Image compression failed:", err);
+        // Fallback to original
+        setImageFile(file);
+      }
     }
   };
 
@@ -166,24 +188,62 @@ export default function CustomerForm({ customer = null, onBack, onSave }) {
 
   // Label Descriptions for Measurements
   const measurementLabels = {
-    // Vertical
-    abl: { name: 'ABL', desc: 'Across Back Length' },
-    bp: { name: 'BP', desc: 'Bust Point' },
-    ubl: { name: 'UBL', desc: 'Under Bust Length' },
-    wl: { name: 'WL', desc: 'Waist Length' },
-    lwl: { name: 'LWL', desc: 'Low Waist Length' },
-    hl: { name: 'HL', desc: 'Hip Length' },
-    skl: { name: 'SKL', desc: 'Skirt Length' },
-    sl: { name: 'SL', desc: 'Sleeve Length' },
-    gl: { name: 'GL', desc: 'Gown Length' },
-    // Horizontal
-    abc: { name: 'ABC', desc: 'Across Back Chest' },
-    bc: { name: 'BC', desc: 'Bust Circumference' },
-    ubc: { name: 'UBC', desc: 'Under Bust Circumference' },
-    wc: { name: 'WC', desc: 'Waist Circumference' },
-    lwc: { name: 'LWC', desc: 'Low Waist Circumference' },
-    hc: { name: 'HC', desc: 'Hip Circumference' },
-    nn: { name: 'N-N', desc: 'Nipple to Nipple' },
+    Female: {
+      Vertical: {
+        abl: { name: 'ABL', desc: 'Across Back Length' },
+        bp: { name: 'BP', desc: 'Bust Point' },
+        ubl: { name: 'UBL', desc: 'Under Bust Length' },
+        wl: { name: 'WL', desc: 'Waist Length' },
+        lwl: { name: 'LWL', desc: 'Low Waist Length' },
+        hl: { name: 'HL', desc: 'Hip Length' },
+        skl: { name: 'SKL', desc: 'Skirt Length' },
+        sl: { name: 'SL', desc: 'Sleeve Length' },
+        gl: { name: 'GL', desc: 'Gown Length' },
+      },
+      Horizontal: {
+        abc: { name: 'ABC', desc: 'Across Back Chest' },
+        bc: { name: 'BC', desc: 'Bust Circumference' },
+        ubc: { name: 'UBC', desc: 'Under Bust Circumference' },
+        wc: { name: 'WC', desc: 'Waist Circumference' },
+        lwc: { name: 'LWC', desc: 'Low Waist Circumference' },
+        hc: { name: 'HC', desc: 'Hip Circumference' },
+        nn: { name: 'N-N', desc: 'Nipple to Nipple' },
+      }
+    },
+    Male: {
+      Core: {
+        fl: { name: 'FL', desc: 'Full Length' },
+        sw: { name: 'SW', desc: 'Shoulder to Waist' },
+        sk: { name: 'SK', desc: 'Shoulder to Knee' },
+        bl: { name: 'BL', desc: 'Back Length' },
+        cl: { name: 'CL', desc: 'Crotch Length' },
+      },
+      Round: {
+        n: { name: 'N', desc: 'Neck' },
+        s: { name: 'S', desc: 'Shoulder' },
+        c: { name: 'C', desc: 'Chest' },
+        st: { name: 'ST', desc: 'Stomach/Belly' },
+        w: { name: 'W', desc: 'Waist' },
+        h: { name: 'H', desc: 'Hip/Seat' },
+        ah: { name: 'AH', desc: 'Arm Hole' },
+        b: { name: 'B', desc: 'Bicep' },
+        wr: { name: 'WR', desc: 'Wrist' },
+      },
+      Specific: {
+        nw: { name: 'NW', desc: 'Neck Width' },
+        nd: { name: 'ND', desc: 'Neck Depth' },
+        sd: { name: 'SD', desc: 'Shoulder Drop' },
+        cw: { name: 'CW', desc: 'Chest Width' },
+        wd: { name: 'WD', desc: 'Waist Dart' },
+        so: { name: 'SO', desc: 'Sleeve Opening' },
+        pp: { name: 'PP', desc: 'Pocket Position' },
+        tw: { name: 'TW', desc: 'Trouser Waist' },
+        tl: { name: 'TL', desc: 'Trouser Length' },
+        tt: { name: 'TT', desc: 'Trouser Thigh' },
+        tk: { name: 'TK', desc: 'Trouser Knee' },
+        ta: { name: 'TA', desc: 'Trouser Ankle' },
+      }
+    }
   };
 
   return (
@@ -284,57 +344,135 @@ export default function CustomerForm({ customer = null, onBack, onSave }) {
 
         {/* SECTION 2: Body Measurements */}
         <div className="premium-card space-y-4">
-          <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">
-            Customer Measurements (Inches)
-          </h3>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Vertical column */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Vertical Measurements</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {Object.keys(measurementLabels).slice(0, 9).map((key) => (
-                  <div key={key}>
-                    <label className="input-label" htmlFor={key} title={measurementLabels[key].desc}>
-                      {measurementLabels[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels[key].desc})</span>
-                    </label>
-                    <input 
-                      id={key}
-                      type="text" 
-                      name={key} 
-                      value={measurements[key]} 
-                      onChange={handleMeasurementChange} 
-                      className="input-field text-center font-semibold"
-                      placeholder="--"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Horizontal column */}
-            <div className="space-y-3">
-              <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Horizontal Measurements</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {Object.keys(measurementLabels).slice(9).map((key) => (
-                  <div key={key}>
-                    <label className="input-label" htmlFor={key} title={measurementLabels[key].desc}>
-                      {measurementLabels[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels[key].desc})</span>
-                    </label>
-                    <input 
-                      id={key}
-                      type="text" 
-                      name={key} 
-                      value={measurements[key]} 
-                      onChange={handleMeasurementChange} 
-                      className="input-field text-center font-semibold"
-                      placeholder="--"
-                    />
-                  </div>
-                ))}
-              </div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider">
+              Customer Measurements (Inches)
+            </h3>
+            
+            {/* Measurement Type Toggle */}
+            <div className="flex bg-gray-100 p-1 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setMeasurementType('Female')}
+                className={`px-4 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                  measurementType === 'Female' 
+                    ? 'bg-white shadow text-gray-900' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Female
+              </button>
+              <button
+                type="button"
+                onClick={() => setMeasurementType('Male')}
+                className={`px-4 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                  measurementType === 'Male' 
+                    ? 'bg-white shadow text-gray-900' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Male
+              </button>
             </div>
           </div>
+          
+          {measurementType === 'Female' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Vertical column */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Vertical Measurements</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {Object.keys(measurementLabels.Female.Vertical).map((key) => (
+                    <div key={key}>
+                      <label className="input-label" htmlFor={key} title={measurementLabels.Female.Vertical[key].desc}>
+                        {measurementLabels.Female.Vertical[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels.Female.Vertical[key].desc})</span>
+                      </label>
+                      <input 
+                        id={key}
+                        type="text" 
+                        name={key} 
+                        value={measurements[key]} 
+                        onChange={handleMeasurementChange} 
+                        className="input-field text-center font-semibold"
+                        placeholder="--"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Horizontal column */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Horizontal Measurements</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {Object.keys(measurementLabels.Female.Horizontal).map((key) => (
+                    <div key={key}>
+                      <label className="input-label" htmlFor={key} title={measurementLabels.Female.Horizontal[key].desc}>
+                        {measurementLabels.Female.Horizontal[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels.Female.Horizontal[key].desc})</span>
+                      </label>
+                      <input 
+                        id={key}
+                        type="text" 
+                        name={key} 
+                        value={measurements[key]} 
+                        onChange={handleMeasurementChange} 
+                        className="input-field text-center font-semibold"
+                        placeholder="--"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Core & Round */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Core Body Measurements</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {Object.keys(measurementLabels.Male.Core).map((key) => (
+                      <div key={key}>
+                        <label className="input-label" htmlFor={key} title={measurementLabels.Male.Core[key].desc}>
+                          {measurementLabels.Male.Core[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels.Male.Core[key].desc})</span>
+                        </label>
+                        <input id={key} type="text" name={key} value={measurements[key]} onChange={handleMeasurementChange} className="input-field text-center font-semibold" placeholder="--" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Round Measurements</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {Object.keys(measurementLabels.Male.Round).map((key) => (
+                      <div key={key}>
+                        <label className="input-label" htmlFor={key} title={measurementLabels.Male.Round[key].desc}>
+                          {measurementLabels.Male.Round[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels.Male.Round[key].desc})</span>
+                        </label>
+                        <input id={key} type="text" name={key} value={measurements[key]} onChange={handleMeasurementChange} className="input-field text-center font-semibold" placeholder="--" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Nigerian Dress Specific */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold text-gray-400 border-b pb-1">Dress / Trouser Specific</h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {Object.keys(measurementLabels.Male.Specific).map((key) => (
+                    <div key={key}>
+                      <label className="input-label" htmlFor={key} title={measurementLabels.Male.Specific[key].desc}>
+                        {measurementLabels.Male.Specific[key].name} <span className="text-[10px] text-gray-400 font-normal">({measurementLabels.Male.Specific[key].desc})</span>
+                      </label>
+                      <input id={key} type="text" name={key} value={measurements[key]} onChange={handleMeasurementChange} className="input-field text-center font-semibold" placeholder="--" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* SECTION 3: Order Details (Only shown when creating new customer) */}

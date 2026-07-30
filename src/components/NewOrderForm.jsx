@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Loader2, Camera, RotateCcw } from 'lucide-react';
+import { compressImage } from '@/lib/imageCompression';
 
 /**
  * NewOrderForm — Used when an existing customer wants a new/repeat order.
@@ -71,11 +72,18 @@ export default function NewOrderForm({ customer, onBack, onSave }) {
     }
   };
 
-  const handleImageChange = (e) => {
+  // Handle image select & compression
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      try {
+        setImagePreview(URL.createObjectURL(file));
+        const compressedFile = await compressImage(file, 1200, 1200, 0.7);
+        setImageFile(compressedFile);
+      } catch (err) {
+        console.error("Image compression failed:", err);
+        setImageFile(file);
+      }
     }
   };
 
