@@ -9,22 +9,9 @@ export default function SuperAdminTabs({ initialClients, initialRequests }) {
 
   return (
     <div>
-      <div className="sm:hidden mb-4">
-        <label htmlFor="tabs" className="sr-only">Select a tab</label>
-        <select
-          id="tabs"
-          name="tabs"
-          className="block w-full rounded-md border-gray-300 focus:border-red-500 focus:ring-red-500"
-          value={activeTab}
-          onChange={(e) => setActiveTab(e.target.value)}
-        >
-          <option value="clients">Active Clients</option>
-          <option value="pending">Pending Approvals</option>
-        </select>
-      </div>
-      <div className="hidden sm:block mb-6">
+      <div className="mb-6 overflow-x-auto">
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <nav className="-mb-px flex space-x-6 sm:space-x-8 min-w-max" aria-label="Tabs">
             <button
               onClick={() => setActiveTab("clients")}
               className={`${
