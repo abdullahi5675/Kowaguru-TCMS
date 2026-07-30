@@ -18,13 +18,14 @@ export async function POST(request) {
     }
 
     const { requestId } = await request.json();
+    const parsedId = parseInt(requestId, 10);
 
-    if (!requestId) {
-      return NextResponse.json({ error: 'Missing request ID' }, { status: 400 });
+    if (!parsedId) {
+      return NextResponse.json({ error: 'Missing or invalid request ID' }, { status: 400 });
     }
 
     await prisma.paymentRequest.update({
-      where: { id: requestId },
+      where: { id: parsedId },
       data: { status: 'REJECTED' }
     });
 
