@@ -1,7 +1,7 @@
 import { verifyToken } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import ClientList from "./components/ClientList";
 import PendingApprovals from "./components/PendingApprovals";
 import SuperAdminTabs from "./components/SuperAdminTabs";
