@@ -370,6 +370,54 @@ export default function Settings({ initialSettings = null, onSaveSettings }) {
             </p>
           </div>
 
+          <div className="premium-card space-y-4">
+            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">
+              Security
+            </h3>
+            
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const currentPassword = e.target.currentPassword.value;
+              const newPassword = e.target.newPassword.value;
+              const confirmPassword = e.target.confirmPassword.value;
+              
+              if (newPassword !== confirmPassword) {
+                alert("New passwords do not match!");
+                return;
+              }
+              
+              try {
+                const res = await fetch('/api/auth/change-password', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ currentPassword, newPassword })
+                });
+                
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                
+                alert("Password changed successfully!");
+                e.target.reset();
+              } catch (err) {
+                alert("Failed to change password: " + err.message);
+              }
+            }} className="space-y-3">
+              <div>
+                <label className="input-label">Current Password</label>
+                <input type="password" name="currentPassword" required className="input-field" placeholder="Enter current password" />
+              </div>
+              <div>
+                <label className="input-label">New Password</label>
+                <input type="password" name="newPassword" required className="input-field" placeholder="Enter new password" minLength={6} />
+              </div>
+              <div>
+                <label className="input-label">Confirm New Password</label>
+                <input type="password" name="confirmPassword" required className="input-field" placeholder="Re-enter new password" minLength={6} />
+              </div>
+              <button type="submit" className="btn-secondary w-full">Update Password</button>
+            </form>
+          </div>
+
         </div>
       </div>
     </div>

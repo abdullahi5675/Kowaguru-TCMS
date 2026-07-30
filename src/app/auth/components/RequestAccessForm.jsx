@@ -213,12 +213,10 @@ export default function RequestAccessForm() {
             </div>
           )}
           
-          {/* Include capture="environment" to allow taking photos easily on mobile */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            capture="environment"
             className="hidden"
             onChange={handleFileChange}
           />

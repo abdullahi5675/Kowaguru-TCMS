@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import ClientList from "./components/ClientList";
 import PendingApprovals from "./components/PendingApprovals";
 import SuperAdminTabs from "./components/SuperAdminTabs";
+import LogoutButton from "./components/LogoutButton";
 
 export const metadata = {
   title: "Super Admin | Kowaguru TCMS",
@@ -51,12 +52,15 @@ export default async function SuperAdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6 lg:p-12">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Super Admin Dashboard</h1>
             <p className="mt-2 text-sm text-gray-600">
               Manage Kowaguru TCMS clients and approve payment requests.
             </p>
+          </div>
+          <div>
+            <LogoutButton />
           </div>
         </div>
 
