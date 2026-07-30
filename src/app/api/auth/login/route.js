@@ -30,10 +30,10 @@ export async function POST(request) {
     }
 
     // Sign JWT
-    const token = await signToken({ userId: user.id, email: user.email });
+    const token = await signToken({ userId: user.id, email: user.email, role: user.role });
 
     // Set cookie
-    const response = NextResponse.json({ success: true, user: { id: user.id, name: user.name, email: user.email } }, { status: 200 });
+    const response = NextResponse.json({ success: true, user: { id: user.id, name: user.name, email: user.email, role: user.role } }, { status: 200 });
     response.cookies.set({
       name: 'auth-token',
       value: token,

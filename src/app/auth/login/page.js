@@ -55,7 +55,11 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        window.location.href = '/'; // Force full reload to update state
+        if (data.user?.role === 'SUPER_ADMIN') {
+          window.location.href = '/super-admin';
+        } else {
+          window.location.href = '/'; // Force full reload to update state
+        }
       } else {
         setError(data.error || 'Failed to login');
       }
