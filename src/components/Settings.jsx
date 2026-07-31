@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Settings as SettingsIcon, Save, Moon, Sun, Download, Upload, Loader2, CheckCircle2, Image as ImageIcon, X } from 'lucide-react';
 
-export default function Settings({ initialSettings = null, onSaveSettings }) {
+export default function Settings({ initialSettings = null, onSaveSettings, isFirstRun = false, onCompleteSetup }) {
   const [loading, setLoading] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -66,6 +66,10 @@ export default function Settings({ initialSettings = null, onSaveSettings }) {
       await onSaveSettings(settings);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
+      
+      if (isFirstRun && onCompleteSetup) {
+        onCompleteSetup();
+      }
     } catch (err) {
       console.error(err);
       alert("Failed to save settings.");
@@ -149,6 +153,22 @@ export default function Settings({ initialSettings = null, onSaveSettings }) {
 
   return (
     <div className="space-y-6">
+      {isFirstRun && (
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-900/50 p-4 rounded-xl flex items-start gap-4">
+          <div className="bg-red-100 dark:bg-red-950 p-2 rounded-lg text-red-700 dark:text-red-400">
+            <CheckCircle2 size={24} />
+          </div>
+          <div>
+            <h3 className="text-red-900 dark:text-red-300 font-bold text-lg">Welcome to Kowaguru TCMS!</h3>
+            <p className="text-red-700 dark:text-red-400 text-sm mt-1">
+              Before you can start managing your tailoring shop, please set up your Business Identity below. 
+              We also highly recommend updating your security settings by changing your temporary password on the right side.
+              Once you click "Save Settings", your dashboard will be unlocked!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="border-b pb-4" style={{ borderColor: 'var(--card-border)' }}>
         <h2 className="text-xl font-bold flex items-center gap-2">

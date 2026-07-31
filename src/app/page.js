@@ -43,6 +43,7 @@ export default function Home() {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [businessSettings, setBusinessSettings] = useState(null);
+  const [isFirstRun, setIsFirstRun] = useState(false);
 
   // Load initial data
   useEffect(() => {
@@ -75,13 +76,10 @@ export default function Home() {
         const data = await res.json();
         setBusinessSettings(data);
 
-        // First-run: redirect to setup if businessName is still the default
-        if (!data || !data.businessName || data.businessName === 'Kowaguru TCMS') {
-          // Only redirect if there's no real name set yet AND no isSetup flag
-          // We check: if businessAddress is also empty, it's truly a first run
-          if (!data.businessAddress && !data.phone) {
-            router.push('/setup');
-          }
+        // Check if it's the first login (empty business address or phone)
+        if (!data.businessAddress || !data.phone) {
+          setIsFirstRun(true);
+          setActiveTab('settings');
         }
       }
     } catch (err) {
@@ -116,6 +114,11 @@ export default function Home() {
 
   // Navigate & Fetch Hooks
   const handleTabChange = (tabName) => {
+    if (isFirstRun && tabName !== 'settings') {
+      // Prevent navigating away from settings during first-time setup
+      return;
+    }
+    
     setActiveTab(tabName);
     setSearchQuery('');
     
@@ -503,6 +506,8 @@ export default function Home() {
             <Settings 
               initialSettings={businessSettings} 
               onSaveSettings={handleSaveSettings}
+              isFirstRun={isFirstRun}
+              onCompleteSetup={() => setIsFirstRun(false)}
             />
           )}
 
