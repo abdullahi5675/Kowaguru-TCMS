@@ -6,7 +6,7 @@ export default function RequestAccessForm() {
   const [formData, setFormData] = useState({
     shopName: "",
     email: "",
-    state: "Jigawa",
+    state: "N/A",
   });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);

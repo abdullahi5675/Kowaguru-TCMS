@@ -46,8 +46,8 @@ export default async function SuperAdminPage() {
   });
 
   const totalClients = clients.length;
-  // A simple revenue calculation assuming each client paid 10,000 as a placeholder for now
-  const totalRevenue = totalClients * 10000;
+  // A simple revenue calculation assuming each client paid 20,000
+  const totalRevenue = totalClients * 20000;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 lg:p-12">
