@@ -12,8 +12,8 @@ export const viewport = {
 };
 
 export const metadata = {
-  title: "Kowaguru TCMS",
-  description: "Tailoring Shop Management System",
+  title: "Digital Tailor | kowagurutech.ng",
+  description: "Digital Tailor Management System",
   manifest: "/manifest.json",
   icons: {
     icon: "/app-icon.png",
@@ -22,7 +22,7 @@ export const metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Kowaguru TCMS",
+    title: "Digital Tailor",
   },
 };
 
