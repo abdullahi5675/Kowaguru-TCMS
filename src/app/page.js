@@ -13,7 +13,9 @@ import {
   Phone,
   Moon,
   Sun,
-  Scissors
+  Scissors,
+  Menu,
+  X
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -31,6 +33,7 @@ export default function Home() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // App States
   const [stats, setStats] = useState({});
@@ -121,6 +124,7 @@ export default function Home() {
     
     setActiveTab(tabName);
     setSearchQuery('');
+    setIsMobileMenuOpen(false); // Close mobile menu when navigating
     
     if (tabName === 'dashboard') {
       fetchStats();
@@ -281,48 +285,115 @@ export default function Home() {
     setActiveTab('summary');
   };
 
+  const navTabs = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'customers', label: 'Customers Directory', icon: Users },
+    { id: 'reminders', label: 'Reminders', icon: Calendar },
+    { id: 'reports', label: 'Reports & Stats', icon: BarChart2 },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-zinc-900 transition-colors duration-200">
       
       {/* 1. TOP HEADER (no-print) */}
-      <header className="nav-bar shadow-sm px-6 py-4 no-print flex justify-between items-center bg-white dark:bg-zinc-800">
+      <header className="nav-bar shadow-sm px-4 md:px-6 py-4 no-print flex justify-between items-center bg-white dark:bg-zinc-800">
         
         {/* Left Side: Logo and Business Name */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 overflow-hidden">
           <Logo
             variant="icon"
             size={42}
             logoUrl={businessSettings?.businessLogo || null}
             businessName={(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
           />
-          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 block">
+          <h1 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-100 truncate">
             {(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
           </h1>
         </div>
         
-        {/* Right Side: Log Out */}
-        <div className="flex items-center">
+        {/* Right Side: Log Out & Hamburger */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button 
             onClick={handleLogout} 
-            className="text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-700 transition-colors border border-red-200 dark:border-red-900/50 px-4 py-1.5 rounded-lg"
+            className="hidden md:block text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-700 transition-colors border border-red-200 dark:border-red-900/50 px-4 py-1.5 rounded-lg"
           >
             Log out
+          </button>
+          
+          <button 
+            className="md:hidden p-2 text-gray-600 dark:text-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 transition-colors"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu size={24} />
           </button>
         </div>
       </header>
 
+      {/* MOBILE SLIDE-OVER MENU */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[100] flex md:hidden no-print">
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/60 transition-opacity" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          
+          {/* Slide panel */}
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-zinc-800 h-full shadow-2xl animate-in slide-in-from-left duration-200">
+            <div className="p-4 border-b dark:border-zinc-700 flex justify-between items-center">
+              <span className="font-bold text-gray-800 dark:text-gray-100 text-lg">Menu</span>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="p-2 text-gray-500 rounded-lg bg-gray-100 dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-4 flex-1 overflow-y-auto flex flex-col gap-2">
+              {navTabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id || 
+                  (tab.id === 'customers' && ['new-customer', 'edit-customer', 'customer-detail', 'new-order'].includes(activeTab)) ||
+                  (tab.id === 'reminders' && activeTab === 'summary');
+                
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all text-left ${
+                      isActive
+                        ? 'bg-red-700 text-white shadow-md'
+                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900'
+                    }`}
+                  >
+                    <Icon size={18} />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            
+            <div className="p-4 border-t dark:border-zinc-700">
+              <button 
+                onClick={handleLogout} 
+                className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-red-600 hover:text-white hover:bg-red-600 border-2 border-red-200 hover:border-red-600 px-4 py-3 rounded-xl transition-colors"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 2. MAIN LAYOUT */}
       <div className="flex-1 flex flex-col md:flex-row app-container w-full max-w-7xl px-4 py-6 gap-6">
         
-        {/* SIDEBAR NAVIGATION (no-print) */}
-        <aside className="w-full md:w-64 flex flex-col gap-2 no-print">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-            { id: 'customers', label: 'Customers Directory', icon: Users },
-            { id: 'reminders', label: 'Reminders', icon: Calendar },
-            { id: 'reports', label: 'Reports & Stats', icon: BarChart2 },
-            { id: 'settings', label: 'Settings', icon: SettingsIcon },
-          ].map((tab) => {
+        {/* DESKTOP SIDEBAR NAVIGATION (no-print) */}
+        <aside className="hidden md:flex w-64 flex-col gap-2 no-print">
+          {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id || 
               (tab.id === 'customers' && ['new-customer', 'edit-customer', 'customer-detail', 'new-order'].includes(activeTab)) ||
@@ -521,7 +592,7 @@ export default function Home() {
 
       {/* Floating WhatsApp Support Button */}
       <a 
-        href="https://wa.me/2347047495488" 
+        href="https://wa.me/2348023603283" 
         target="_blank" 
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg z-50 flex items-center justify-center transition-transform hover:scale-110 no-print"

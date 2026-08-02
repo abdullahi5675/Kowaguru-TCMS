@@ -106,19 +106,19 @@ export default function RequestAccessForm() {
         <div className="bg-white p-3 rounded-lg border border-red-100 mb-3 text-sm">
           <div className="flex justify-between mb-1">
             <span className="text-gray-500">Bank:</span>
-            <span className="font-bold">Union Bank</span>
+            <span className="font-bold">MONIE POINT</span>
           </div>
           <div className="flex justify-between mb-1">
             <span className="text-gray-500">Account No:</span>
-            <span className="font-bold text-lg">0218231312</span>
+            <span className="font-bold text-lg">4005792569</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Name:</span>
-            <span className="font-bold">Hussaini Abdullahi Nayaya</span>
+            <span className="font-bold">KOWAGURU TECHNOLOGY LIMITED</span>
           </div>
         </div>
         <p className="text-xs text-red-700 text-center">
-          Questions? Call / WhatsApp: <strong>07047495488</strong>
+          Questions? Call / WhatsApp: <strong>08023603283</strong>
         </p>
       </div>
 
@@ -216,7 +216,7 @@ export default function RequestAccessForm() {
       
       <p className="text-xs text-gray-500 mt-4">
         For Enquiries, Call or WhatsApp:<br/>
-        <a href="https://wa.me/2347047495488" className="font-bold text-red-700">07047495488</a>
+        <a href="https://wa.me/2348023603283" className="font-bold text-red-700">08023603283</a>
       </p>
     </div>
   );
