@@ -5,13 +5,15 @@ export async function middleware(request) {
   const token = request.cookies.get('auth-token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Define public routes
+  // Define public routes (no login required)
   const isPublicRoute = pathname.startsWith('/auth') || 
                         pathname.startsWith('/receipt') || 
+                        pathname === '/' ||              // Landing page
+                        pathname === '/home' ||          // Landing page
                         pathname === '/api/auth/login' || 
                         pathname === '/api/auth/register' ||
                         pathname.startsWith('/api/public') ||
-                        pathname.startsWith('/api/upload'); // temporarily public until we integrate Supabase Storage with tokens if needed
+                        pathname.startsWith('/api/upload');
 
   if (!token && !isPublicRoute) {
     // Redirect to login if accessing a protected route without a token
