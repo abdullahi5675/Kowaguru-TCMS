@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import { verifyToken } from '@/lib/auth';
 import nodemailer from 'nodemailer';
 
+export const runtime = 'nodejs';
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '465'),
