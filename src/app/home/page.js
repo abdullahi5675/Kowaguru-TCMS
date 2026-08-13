@@ -36,58 +36,7 @@ const features = [
   },
 ];
 
-const pricing = [
-  {
-    name: 'FREE',
-    price: '₦0',
-    period: 'Forever',
-    color: 'border-gray-200',
-    badge: null,
-    features: [
-      'Up to 50 Customers',
-      'Order Management',
-      'Payment Tracking',
-      'Collection Reminders',
-      'KowaGuru Branded Receipts',
-    ],
-    cta: 'Start for Free',
-    ctaStyle: 'bg-gray-900 text-white hover:bg-gray-700',
-  },
-  {
-    name: 'PRO',
-    price: '₦5,000',
-    period: 'per month',
-    color: 'border-red-600',
-    badge: 'Most Popular',
-    features: [
-      'Unlimited Customers',
-      'No Ads',
-      'PDF Export',
-      'Data Backup & Restore',
-      'Custom Business Logo',
-      'Priority Support',
-    ],
-    cta: 'Get Pro Access',
-    ctaStyle: 'bg-red-700 text-white hover:bg-red-800',
-  },
-  {
-    name: 'ENTERPRISE',
-    price: '₦50,000',
-    period: 'per year',
-    color: 'border-green-600',
-    badge: 'For Schools',
-    features: [
-      'Multi-User Access',
-      'Cloud Sync',
-      'Custom Logo & Branding',
-      'Staff Training Session',
-      'Full Reports & Analytics',
-      'Dedicated Support Line',
-    ],
-    cta: 'Contact Us',
-    ctaStyle: 'bg-green-700 text-white hover:bg-green-800',
-  },
-];
+
 
 const faqs = [
   {
@@ -239,51 +188,39 @@ export default function LandingPage() {
 
       {/* ========== PRICING SECTION ========== */}
       <section className="py-20 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">Simple, Transparent Pricing</h2>
-            <p className="text-gray-500 mt-3 text-lg">Start free. Upgrade when your business grows.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pricing.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative bg-white border-2 ${plan.color} rounded-2xl p-8 shadow-sm flex flex-col ${plan.badge === 'Most Popular' ? 'shadow-xl scale-105' : ''}`}
-              >
-                {plan.badge && (
-                  <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full text-white ${plan.badge === 'Most Popular' ? 'bg-red-600' : 'bg-green-600'}`}>
-                    {plan.badge}
-                  </span>
-                )}
-                <div className="mb-6">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">{plan.name}</p>
-                  <p className="text-4xl font-extrabold text-gray-900">{plan.price}</p>
-                  <p className="text-sm text-gray-400 mt-1">{plan.period}</p>
-                </div>
-                <ul className="space-y-3 flex-1 mb-8">
-                  {plan.features.map((feat) => (
-                    <li key={feat} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-green-500 font-bold mt-0.5">✓</span>
-                      {feat}
-                    </li>
-                  ))}
-                </ul>
-                {plan.name === 'ENTERPRISE' ? (
-                  <a
-                    href="https://wa.me/2348023603283?text=I am interested in the Enterprise plan for KowaGuru TCMS"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full text-center font-bold py-3 rounded-xl transition-all ${plan.ctaStyle}`}
-                  >
-                    {plan.cta}
-                  </a>
-                ) : (
-                  <Link href="/auth/request-access" className={`w-full block text-center font-bold py-3 rounded-xl transition-all ${plan.ctaStyle}`}>
-                    {plan.cta}
-                  </Link>
-                )}
-              </div>
-            ))}
+        <div className="max-w-xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Simple, One-Time Pricing</h2>
+          <p className="text-gray-500 text-lg mb-10">One price. Full access. No hidden charges.</p>
+          <div className="relative bg-white border-2 border-red-600 rounded-2xl p-10 shadow-xl">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full text-white bg-red-600">
+              Current Price
+            </span>
+            <p className="text-6xl font-black text-gray-900 mb-1">₦20,000</p>
+            <p className="text-gray-400 text-sm mb-8">One-time setup fee — access for your shop</p>
+            <ul className="space-y-3 text-left mb-10">
+              {[
+                'Unlimited Customers & Measurements',
+                'Full Order Management',
+                'Payment & Balance Tracker',
+                'Collection Reminders',
+                'Professional Print & WhatsApp Receipts',
+                'Customer History & Reports',
+                'Works Offline',
+                'Business Logo & Branding',
+              ].map((feat) => (
+                <li key={feat} className="flex items-start gap-2 text-sm text-gray-600">
+                  <span className="text-green-500 font-bold mt-0.5">✓</span>
+                  {feat}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/auth/request-access"
+              className="block w-full text-center font-bold py-4 rounded-xl bg-red-700 text-white hover:bg-red-800 transition-all text-lg"
+            >
+              Get Started — ₦20,000
+            </Link>
+            <p className="text-gray-400 text-xs mt-4">Pay once · Contact us on WhatsApp to get started</p>
           </div>
         </div>
       </section>
