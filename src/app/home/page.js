@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const features = [
   {
@@ -36,8 +36,6 @@ const features = [
   },
 ];
 
-
-
 const faqs = [
   {
     q: 'Does it work without internet?',
@@ -57,17 +55,34 @@ const faqs = [
   },
   {
     q: 'How do I get started?',
-    a: 'Simply click "Start for Free", request access, and we will set up your account. No credit card required for the free plan.',
+    a: 'Simply click "Get Access Now — ₦20,000", request access, and we will set up your account for your shop.',
   },
 ];
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-sans">
+    <div className="min-h-screen bg-white text-gray-800 font-sans relative">
       {/* ========== NAVBAR ========== */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 px-6 py-4 flex items-center justify-between shadow-sm transition-all duration-300">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 bg-red-700 rounded-xl flex items-center justify-center shadow">
             <span className="text-white text-lg font-bold font-serif">K</span>
@@ -75,18 +90,9 @@ export default function LandingPage() {
           <span className="font-extrabold text-gray-900 text-lg tracking-tight">KowaGuru TCMS</span>
         </div>
         <div className="flex items-center gap-3">
-          <a
-            href="https://wa.me/2348023603283"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.989.574 3.842 1.563 5.408L2 22l4.763-1.528A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2zm.001 18a7.96 7.96 0 0 1-4.062-1.11l-.292-.173-3.006.964.981-2.924-.19-.3A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
-            Book a Demo
-          </a>
           <Link
             href="/auth/login"
-            className="text-sm font-semibold px-4 py-2 rounded-xl border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white transition-all"
+            className="text-sm font-semibold px-5 py-2.5 rounded-xl border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white transition-all shadow-sm"
           >
             Login
           </Link>
@@ -110,20 +116,12 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth/request-access"
-              className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all transform hover:-translate-y-1 hover:shadow-red-600/30"
             >
-              ✂️ Start Using for Free
+              ✂️ Get Access Now — ₦20,000
             </Link>
-            <a
-              href="https://wa.me/2348023603283?text=Hello, I want to book a free demo of KowaGuru TCMS"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-2xl text-lg border border-white/20 transition-all"
-            >
-              📞 Book a Free Demo
-            </a>
           </div>
-          <p className="text-gray-400 text-sm mt-6">No credit card required · Free plan available · Works on any phone</p>
+          <p className="text-gray-400 text-sm mt-6">One-time payment of ₦20,000 · Full access for your shop · Works on any phone</p>
         </div>
       </section>
 
@@ -139,7 +137,7 @@ export default function LandingPage() {
               '❌ No payment tracking → Bad debts',
               '❌ No reminders → Late deliveries',
             ].map((item) => (
-              <div key={item} className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 text-sm font-semibold text-red-800">
+              <div key={item} className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 text-sm font-semibold text-red-800 shadow-sm transition-transform hover:-translate-y-0.5">
                 {item}
               </div>
             ))}
@@ -156,7 +154,7 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f) => (
-              <div key={f.title} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-red-200 transition-all">
+              <div key={f.title} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-red-200 transition-all transform hover:-translate-y-1">
                 <div className="text-4xl mb-4">{f.icon}</div>
                 <h3 className="font-extrabold text-gray-900 mb-2 text-base">{f.title}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
@@ -177,7 +175,7 @@ export default function LandingPage() {
               { step: '03', title: 'Print, Share & Deliver', desc: 'Generate a professional receipt and deliver on time. Your customer will be impressed.' },
             ].map((item) => (
               <div key={item.step} className="flex flex-col items-center">
-                <div className="h-16 w-16 rounded-full bg-red-700 flex items-center justify-center text-2xl font-black mb-4">{item.step}</div>
+                <div className="h-16 w-16 rounded-full bg-red-700 flex items-center justify-center text-2xl font-black mb-4 shadow-lg">{item.step}</div>
                 <h3 className="font-extrabold text-lg mb-2">{item.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
               </div>
@@ -191,8 +189,8 @@ export default function LandingPage() {
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Simple, One-Time Pricing</h2>
           <p className="text-gray-500 text-lg mb-10">One price. Full access. No hidden charges.</p>
-          <div className="relative bg-white border-2 border-red-600 rounded-2xl p-10 shadow-xl">
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full text-white bg-red-600">
+          <div className="relative bg-white border-2 border-red-600 rounded-2xl p-10 shadow-xl transition-all transform hover:-translate-y-1">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full text-white bg-red-600 shadow-md">
               Current Price
             </span>
             <p className="text-6xl font-black text-gray-900 mb-1">₦20,000</p>
@@ -216,7 +214,7 @@ export default function LandingPage() {
             </ul>
             <Link
               href="/auth/request-access"
-              className="block w-full text-center font-bold py-4 rounded-xl bg-red-700 text-white hover:bg-red-800 transition-all text-lg"
+              className="block w-full text-center font-bold py-4 rounded-xl bg-red-700 text-white hover:bg-red-800 transition-all text-lg shadow-lg"
             >
               Get Started — ₦20,000
             </Link>
@@ -269,9 +267,9 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/auth/request-access"
-            className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-10 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-10 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all transform hover:-translate-y-1"
           >
-            ✂️ Start Using for Free Today
+            ✂️ Get Started — ₦20,000
           </Link>
           <Link
             href="/auth/login"
@@ -296,12 +294,26 @@ export default function LandingPage() {
         </p>
       </footer>
 
-      {/* ========== FLOATING WHATSAPP ========== */}
+      {/* ========== FLOATING RESPONSIVE ELEMENTS ========== */}
+      {/* 1. Floating Scroll-To-Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-6 bg-gray-900/90 hover:bg-black text-white p-3 rounded-full shadow-2xl z-40 transition-all duration-300 transform hover:scale-110 flex items-center justify-center border border-white/10"
+          aria-label="Scroll to top"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+      )}
+
+      {/* 2. Floating WhatsApp Support Button */}
       <a
         href="https://wa.me/2348023603283"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl z-50 flex items-center justify-center transition-transform hover:scale-110"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl z-50 flex items-center justify-center transition-transform hover:scale-110 animate-bounce"
         aria-label="Contact Support on WhatsApp"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.989.574 3.842 1.563 5.408L2 22l4.763-1.528A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2zm.001 18a7.96 7.96 0 0 1-4.062-1.11l-.292-.173-3.006.964.981-2.924-.19-.3A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>

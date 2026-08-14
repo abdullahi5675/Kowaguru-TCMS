@@ -8,12 +8,17 @@ export async function middleware(request) {
   // Define public routes (no login required)
   const isPublicRoute = pathname.startsWith('/auth') || 
                         pathname.startsWith('/receipt') || 
-                        pathname === '/' ||              // Landing page
-                        pathname === '/home' ||          // Landing page
+                        pathname === '/' ||
+                        pathname === '/home' ||
                         pathname === '/api/auth/login' || 
                         pathname === '/api/auth/register' ||
                         pathname.startsWith('/api/public') ||
                         pathname.startsWith('/api/upload');
+
+  // If unauthenticated user lands on root /, redirect to /home
+  if (!token && pathname === '/') {
+    return NextResponse.redirect(new URL('/home', request.url));
+  }
 
   if (!token && !isPublicRoute) {
     // Redirect to login if accessing a protected route without a token
@@ -31,8 +36,8 @@ export async function middleware(request) {
       return response;
     }
 
-    // If logged in and trying to access auth pages, redirect to dashboard
-    if (payload && pathname.startsWith('/auth')) {
+    // If logged in user lands on root / or /home or auth pages, redirect to dashboard
+    if (payload && (pathname === '/' || pathname === '/home' || pathname.startsWith('/auth'))) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     
