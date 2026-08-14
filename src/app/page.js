@@ -112,7 +112,7 @@ export default function LandingPage() {
               href="/auth/request-access"
               className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all hover:-translate-y-0.5"
             >
-              ✂️ Start Using for Free
+              ✂️ Get Access Now — ₦20,000
             </Link>
             <a
               href="https://wa.me/2348023603283?text=Hello, I want to book a free demo of KowaGuru TCMS"
@@ -120,10 +120,10 @@ export default function LandingPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-2xl text-lg border border-white/20 transition-all"
             >
-              📞 Book a Free Demo
+              📞 Book a WhatsApp Demo
             </a>
           </div>
-          <p className="text-gray-400 text-sm mt-6">No credit card required · Free plan available · Works on any phone</p>
+          <p className="text-gray-400 text-sm mt-6">One-time payment of ₦20,000 · Full access for your shop · Works on any phone</p>
         </div>
       </section>
 
@@ -271,7 +271,7 @@ export default function LandingPage() {
             href="/auth/request-access"
             className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-10 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all hover:-translate-y-0.5"
           >
-            ✂️ Start Using for Free Today
+            ✂️ Get Started — ₦20,000
           </Link>
           <Link
             href="/auth/login"
