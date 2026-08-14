@@ -33,13 +33,13 @@ export async function middleware(request) {
 
     // If logged in and trying to access auth pages, redirect to dashboard
     if (payload && pathname.startsWith('/auth')) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     
     // Protect super-admin route
     if (payload && pathname.startsWith('/super-admin')) {
       if (payload.role !== 'SUPER_ADMIN') {
-        return NextResponse.redirect(new URL('/', request.url));
+        return NextResponse.redirect(new URL('/dashboard', request.url));
       }
     }
     

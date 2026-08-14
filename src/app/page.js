@@ -1,606 +1,310 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  BarChart2, 
-  Settings as SettingsIcon,
-  Search,
-  Plus,
-  Loader2,
-  Phone,
-  Moon,
-  Sun,
-  Scissors,
-  Menu,
-  X
-} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useState } from 'react';
 
-import Logo from '@/components/Logo';
-import Dashboard from '@/components/Dashboard';
-import CustomerForm from '@/components/CustomerForm';
-import CustomerDetails from '@/components/CustomerDetails';
-import CustomerSummary from '@/components/CustomerSummary';
-import Reports from '@/components/Reports';
-import Settings from '@/components/Settings';
-import Reminders from '@/components/Reminders';
-import NewOrderForm from '@/components/NewOrderForm';
+const features = [
+  {
+    icon: '📋',
+    title: 'Customer & Measurement Database',
+    desc: 'Save Male & Female measurements permanently. Full support for Shadda, Senator, Kaftan, Atamfa, Gown and more. Never ask a customer twice.',
+  },
+  {
+    icon: '📦',
+    title: 'Order Management',
+    desc: 'Track every order from New → In Progress → Ready → Collected. Know exactly what is sitting in your shop at any time.',
+  },
+  {
+    icon: '💰',
+    title: 'Payment & Balance Tracker',
+    desc: 'Record Full, Advance, or Balance payments. The app automatically calculates what each customer still owes you.',
+  },
+  {
+    icon: '🔔',
+    title: 'Collection Reminders',
+    desc: 'Get alerts Today, Tomorrow, in 3 Days and 7 Days before collection dates. No more "I forgot".',
+  },
+  {
+    icon: '🖨️',
+    title: 'Professional Print & Share',
+    desc: 'Generate a branded A4 receipt with your Logo, Measurements, and Payment details. Print or send on WhatsApp instantly.',
+  },
+  {
+    icon: '📡',
+    title: 'Works Offline',
+    desc: 'No internet? No problem. KowaGuru TCMS works without internet and syncs your data when you are back online.',
+  },
+];
 
-export default function Home() {
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [loading, setLoading] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  // App States
-  const [stats, setStats] = useState({});
-  const [todayOrders, setTodayOrders] = useState([]);
-  const [overdueOrders, setOverdueOrders] = useState([]);
-  
-  const [searchQuery, setSearchQuery] = useState('');
-  const [customers, setCustomers] = useState([]);
-  
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [businessSettings, setBusinessSettings] = useState(null);
-  const [isFirstRun, setIsFirstRun] = useState(false);
 
-  // Load initial data
-  useEffect(() => {
-    fetchBusinessSettings();
-    fetchStats();
-    
-    // Load local storage theme
-    const localTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', localTheme);
-  }, []);
 
-  const fetchStats = async () => {
-    try {
-      const res = await fetch('/api/reports');
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data.summary || {});
-        setTodayOrders(data.todayOrders || []);
-        setOverdueOrders(data.overdueOrders || []);
-      }
-    } catch (err) {
-      console.error("Error loading operational stats:", err);
-    }
-  };
+const faqs = [
+  {
+    q: 'Does it work without internet?',
+    a: 'Yes! KowaGuru TCMS is designed to work fully offline. Your data is saved on your device and syncs to the cloud whenever you have an internet connection.',
+  },
+  {
+    q: 'Can I print receipts for my customers?',
+    a: 'Absolutely. You can generate a professional A4 receipt showing your business logo, customer measurements, order details, and payment summary. Print it or send it directly on WhatsApp.',
+  },
+  {
+    q: 'Is my data safe?',
+    a: 'Yes. Your data is securely stored and encrypted. Only you can access your account. We do not share your customer data with anyone.',
+  },
+  {
+    q: 'Can I use it for both male and female customers?',
+    a: 'Yes! We have full measurement forms for both. The male form includes all measurements for Shadda, Senator, Kaftan and more (FL, SW, SL, N, S, C, W, H, TH, K, A).',
+  },
+  {
+    q: 'How do I get started?',
+    a: 'Simply click "Start for Free", request access, and we will set up your account. No credit card required for the free plan.',
+  },
+];
 
-  const fetchBusinessSettings = async () => {
-    try {
-      const res = await fetch('/api/settings');
-      if (res.ok) {
-        const data = await res.json();
-        setBusinessSettings(data);
-
-        // Check if it's the first login (empty business address or phone)
-        if (!data.businessAddress || !data.phone) {
-          setIsFirstRun(true);
-          setActiveTab('settings');
-        }
-      }
-    } catch (err) {
-      console.error("Error loading settings:", err);
-    }
-  };
-
-  const fetchCustomers = async (query = '') => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/customers?query=${encodeURIComponent(query)}`);
-      if (res.ok) {
-        const data = await res.json();
-        setCustomers(data);
-      }
-    } catch (err) {
-      console.error("Error fetching customers:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Perform search
-  useEffect(() => {
-    if (activeTab === 'customers') {
-      const delayDebounce = setTimeout(() => {
-        fetchCustomers(searchQuery);
-      }, 300);
-      return () => clearTimeout(delayDebounce);
-    }
-  }, [searchQuery, activeTab]);
-
-  // Navigate & Fetch Hooks
-  const handleTabChange = (tabName) => {
-    if (isFirstRun && tabName !== 'settings') {
-      // Prevent navigating away from settings during first-time setup
-      return;
-    }
-    
-    setActiveTab(tabName);
-    setSearchQuery('');
-    setIsMobileMenuOpen(false); // Close mobile menu when navigating
-    
-    if (tabName === 'dashboard') {
-      fetchStats();
-    } else if (tabName === 'customers') {
-      fetchCustomers();
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/auth/login';
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Save new customer (full form)
-  const handleSaveCustomer = async (payload) => {
-    try {
-      const res = await fetch('/api/customers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to register customer profile.');
-      }
-
-      const data = await res.json();
-      
-      // If order was created, show summary page
-      if (data.order) {
-        const fullOrder = {
-          ...data.order,
-          customer: data.customer,
-          measurements: data.measurements ? [data.measurements] : []
-        };
-        setSelectedOrder(fullOrder);
-        setActiveTab('summary');
-      } else {
-        handleTabChange('customers');
-      }
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
-
-  // Update existing customer (Edit Profile flow)
-  const handleUpdateCustomer = async (payload) => {
-    try {
-      const res = await fetch(`/api/customers/${selectedCustomer.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to update customer profile.');
-      }
-
-      await refreshSelectedCustomer(selectedCustomer.id);
-      setActiveTab('customer-detail');
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
-
-  // Save new order for existing customer (re-order flow)
-  const handleSaveNewOrder = async (customerId, payload) => {
-    try {
-      const res = await fetch(`/api/customers/${customerId}/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || 'Failed to create new order.');
-      }
-
-      const data = await res.json();
-      
-      // Show the summary for the new order
-      if (data.order) {
-        setSelectedOrder(data.order);
-        setActiveTab('summary');
-      } else {
-        // Refresh customer detail
-        await refreshSelectedCustomer(customerId);
-        handleTabChange('customer-detail');
-      }
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
-
-  // Refresh a single customer's data after adding an order
-  const refreshSelectedCustomer = async (customerId) => {
-    try {
-      const res = await fetch(`/api/customers?query=`);
-      if (res.ok) {
-        const allCustomers = await res.json();
-        const updated = allCustomers.find(c => c.id === customerId);
-        if (updated) setSelectedCustomer(updated);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSaveSettings = async (payload) => {
-    const res = await fetch('/api/settings', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setBusinessSettings(data);
-    } else {
-      throw new Error("Failed to save settings.");
-    }
-  };
-
-  const handleDeleteCustomer = async (customerId) => {
-    try {
-      const res = await fetch(`/api/customers/${customerId}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        fetchCustomers();
-        setSelectedCustomer(null);
-        setActiveTab('customers');
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSelectCustomer = (customer) => {
-    setSelectedCustomer(customer);
-    setActiveTab('customer-detail');
-  };
-
-  const handleSelectOrder = (order) => {
-    const fullOrder = {
-      ...order,
-      customer: order.customer || selectedCustomer,
-      measurements: order.measurements || (selectedCustomer?.measurements ? [selectedCustomer.measurements[0]] : [])
-    };
-    setSelectedOrder(fullOrder);
-    setActiveTab('summary');
-  };
-
-  const navTabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'customers', label: 'Customers Directory', icon: Users },
-    { id: 'reminders', label: 'Reminders', icon: Calendar },
-    { id: 'reports', label: 'Reports & Stats', icon: BarChart2 },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
-  ];
+export default function LandingPage() {
+  const [openFaq, setOpenFaq] = useState(null);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-zinc-900 transition-colors duration-200">
-      
-      {/* 1. TOP HEADER (no-print) */}
-      <header className="nav-bar shadow-sm px-4 md:px-6 py-4 no-print flex justify-between items-center bg-white dark:bg-zinc-800">
-        
-        {/* Left Side: Logo and Business Name */}
-        <div className="flex items-center gap-3 overflow-hidden">
-          <Logo
-            variant="icon"
-            size={42}
-            logoUrl={businessSettings?.businessLogo || null}
-            businessName={(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
-          />
-          <h1 className="text-lg md:text-xl font-bold text-gray-800 dark:text-gray-100 truncate">
-            {(businessSettings?.businessName && businessSettings.businessName !== 'Kowaguru TCMS') ? businessSettings.businessName : (businessSettings?.registeredShopName || 'Kowaguru TCMS')}
-          </h1>
+    <div className="min-h-screen bg-white text-gray-800 font-sans">
+      {/* ========== NAVBAR ========== */}
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 bg-red-700 rounded-xl flex items-center justify-center shadow">
+            <span className="text-white text-lg font-bold font-serif">K</span>
+          </div>
+          <span className="font-extrabold text-gray-900 text-lg tracking-tight">KowaGuru TCMS</span>
         </div>
-        
-        {/* Right Side: Log Out & Hamburger */}
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <button 
-            onClick={handleLogout} 
-            className="hidden md:block text-sm font-semibold text-red-600 hover:text-white hover:bg-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-700 transition-colors border border-red-200 dark:border-red-900/50 px-4 py-1.5 rounded-lg"
+        <div className="flex items-center gap-3">
+          <a
+            href="https://wa.me/2348023603283"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
           >
-            Log out
-          </button>
-          
-          <button 
-            className="md:hidden p-2 text-gray-600 dark:text-gray-300 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-zinc-700 dark:hover:bg-zinc-600 transition-colors"
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Open menu"
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.989.574 3.842 1.563 5.408L2 22l4.763-1.528A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2zm.001 18a7.96 7.96 0 0 1-4.062-1.11l-.292-.173-3.006.964.981-2.924-.19-.3A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+            Book a Demo
+          </a>
+          <Link
+            href="/auth/login"
+            className="text-sm font-semibold px-4 py-2 rounded-xl border-2 border-red-700 text-red-700 hover:bg-red-700 hover:text-white transition-all"
           >
-            <Menu size={24} />
-          </button>
+            Login
+          </Link>
         </div>
-      </header>
+      </nav>
 
-      {/* MOBILE SLIDE-OVER MENU */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] flex md:hidden no-print">
-          {/* Overlay */}
-          <div 
-            className="fixed inset-0 bg-black/60 transition-opacity" 
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          
-          {/* Slide panel */}
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-zinc-800 h-full shadow-2xl animate-in slide-in-from-left duration-200">
-            <div className="p-4 border-b dark:border-zinc-700 flex justify-between items-center">
-              <span className="font-bold text-gray-800 dark:text-gray-100 text-lg">Menu</span>
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="p-2 text-gray-500 rounded-lg bg-gray-100 dark:bg-zinc-700 hover:bg-gray-200 dark:hover:bg-zinc-600"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className="p-4 flex-1 overflow-y-auto flex flex-col gap-2">
-              {navTabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id || 
-                  (tab.id === 'customers' && ['new-customer', 'edit-customer', 'customer-detail', 'new-order'].includes(activeTab)) ||
-                  (tab.id === 'reminders' && activeTab === 'summary');
-                
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleTabChange(tab.id)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all text-left ${
-                      isActive
-                        ? 'bg-red-700 text-white shadow-md'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700 hover:text-gray-900'
-                    }`}
-                  >
-                    <Icon size={18} />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-            
-            <div className="p-4 border-t dark:border-zinc-700">
-              <button 
-                onClick={handleLogout} 
-                className="w-full flex items-center justify-center gap-2 text-center text-sm font-bold text-red-600 hover:text-white hover:bg-red-600 border-2 border-red-200 hover:border-red-600 px-4 py-3 rounded-xl transition-colors"
-              >
-                Log out
-              </button>
-            </div>
+      {/* ========== HERO SECTION ========== */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-red-950 to-gray-900 text-white">
+        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, #b91c1c 0%, transparent 50%), radial-gradient(circle at 80% 20%, #15803d 0%, transparent 50%)'}} />
+        <div className="relative max-w-5xl mx-auto px-6 py-24 md:py-36 text-center">
+          <span className="inline-block bg-red-700/30 border border-red-500/30 text-red-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            🇳🇬 Built for Nigerian Tailors
+          </span>
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6 tracking-tight">
+            The <span className="text-red-400">#1 App</span> for Tailors<br />and Fashion Designers
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Stop losing customer measurements. Stop missing collection dates. Stop manual books.<br />
+            <strong className="text-white">KowaGuru TCMS</strong> manages your customers, measurements, orders, and payments — all in one place.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/auth/request-access"
+              className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all hover:-translate-y-0.5"
+            >
+              ✂️ Start Using for Free
+            </Link>
+            <a
+              href="https://wa.me/2348023603283?text=Hello, I want to book a free demo of KowaGuru TCMS"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-2xl text-lg border border-white/20 transition-all"
+            >
+              📞 Book a Free Demo
+            </a>
+          </div>
+          <p className="text-gray-400 text-sm mt-6">No credit card required · Free plan available · Works on any phone</p>
+        </div>
+      </section>
+
+      {/* ========== PROBLEM SECTION ========== */}
+      <section className="bg-gray-50 py-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Still Using a Paper Book?</h2>
+          <p className="text-gray-500 text-lg mb-10">Every tailor using a paper book is losing money every single day.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+            {[
+              '❌ Lost measurements → Angry customers',
+              '❌ Forgotten orders → Lost money',
+              '❌ No payment tracking → Bad debts',
+              '❌ No reminders → Late deliveries',
+            ].map((item) => (
+              <div key={item} className="bg-red-50 border border-red-100 rounded-xl px-5 py-4 text-sm font-semibold text-red-800">
+                {item}
+              </div>
+            ))}
           </div>
         </div>
-      )}
+      </section>
 
-      {/* 2. MAIN LAYOUT */}
-      <div className="flex-1 flex flex-col md:flex-row app-container w-full max-w-7xl px-4 py-6 gap-6">
-        
-        {/* DESKTOP SIDEBAR NAVIGATION (no-print) */}
-        <aside className="hidden md:flex w-64 flex-col gap-2 no-print">
-          {navTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id || 
-              (tab.id === 'customers' && ['new-customer', 'edit-customer', 'customer-detail', 'new-order'].includes(activeTab)) ||
-              (tab.id === 'reminders' && activeTab === 'summary');
-            
-            return (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all text-left ${
-                  isActive
-                    ? 'bg-red-700 text-white shadow-md'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900'
-                }`}
-              >
-                <Icon size={18} />
-                {tab.label}
-              </button>
-            );
-          })}
-        </aside>
-
-        {/* 3. MAIN WORKSPACE CONTENT */}
-        <main className="flex-1 min-w-0">
-          
-          {/* TAB 1: DASHBOARD */}
-          {activeTab === 'dashboard' && (
-            <Dashboard 
-              stats={stats} 
-              onNavigate={handleTabChange}
-              todayOrders={todayOrders}
-              overdueOrders={overdueOrders}
-            />
-          )}
-
-          {/* TAB 2: NEW/EDIT CUSTOMER & ORDER FORM */}
-          {(activeTab === 'new-customer' || activeTab === 'edit-customer') && (
-            <CustomerForm 
-              customer={activeTab === 'edit-customer' ? selectedCustomer : null}
-              onBack={() => {
-                if (activeTab === 'edit-customer') setActiveTab('customer-detail');
-                else handleTabChange('dashboard');
-              }} 
-              onSave={activeTab === 'edit-customer' ? handleUpdateCustomer : handleSaveCustomer}
-            />
-          )}
-
-          {/* TAB 3: CUSTOMER DIRECTORY LIST */}
-          {activeTab === 'customers' && (
-            <div className="space-y-6">
-              {/* Directory Filter bar */}
-              <div className="premium-card flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
-                <div className="relative flex-1">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                    <Search size={18} />
-                  </span>
-                  <input 
-                    type="text" 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="input-field"
-                    style={{ paddingLeft: '2.5rem' }}
-                    placeholder="Search by customer name, phone, address..."
-                  />
-                </div>
-                <button 
-                  onClick={() => handleTabChange('new-customer')}
-                  className="btn-primary flex items-center justify-center gap-2"
-                >
-                  <Plus size={18} />
-                  Add Customer
-                </button>
+      {/* ========== FEATURES SECTION ========== */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">Everything Your Shop Needs</h2>
+            <p className="text-gray-500 mt-3 text-lg">10 powerful features, all in one simple app.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((f) => (
+              <div key={f.title} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-red-200 transition-all">
+                <div className="text-4xl mb-4">{f.icon}</div>
+                <h3 className="font-extrabold text-gray-900 mb-2 text-base">{f.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              {/* Customers grid list */}
-              {loading ? (
-                <div className="text-center py-12 text-gray-400 flex justify-center items-center gap-2">
-                  <Loader2 className="animate-spin" size={18} />
-                  Searching Directory...
-                </div>
-              ) : customers.length === 0 ? (
-                <div className="premium-card text-center py-12 text-gray-400">
-                  No registered customers found. Click "Add Customer" to register one.
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {customers.map((cust) => (
-                    <div 
-                      key={cust.id}
-                      onClick={() => handleSelectCustomer(cust)}
-                      className="premium-card flex flex-col justify-between gap-4 cursor-pointer hover:border-red-200 transition-all"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="text-base font-extrabold text-gray-800 dark:text-gray-100">{cust.name}</h4>
-                          <p className="text-xs text-gray-500 font-semibold flex items-center gap-1 mt-0.5">
-                            <Phone size={12} />
-                            {cust.phone}
-                          </p>
-                        </div>
-                        <span className="text-[10px] bg-red-50 text-red-700 font-extrabold px-2 py-0.5 rounded uppercase">
-                          {cust.orders?.length || 0} Orders
-                        </span>
-                      </div>
-                      
-                      {cust.orders && cust.orders.length > 0 && (
-                        <div className="border-t pt-3 flex justify-between items-center text-xs text-gray-500" style={{ borderColor: 'var(--card-border)' }}>
-                          <span>Last Order: {cust.orders[0].tailoringStyle}</span>
-                          <span className="font-bold text-gray-700 dark:text-gray-300">
-                            Due: {new Date(cust.orders[0].collectionDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+      {/* ========== HOW IT WORKS ========== */}
+      <section className="bg-gray-950 text-white py-20 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-12">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Register Your Customer', desc: 'Enter the customer\'s name, phone, and take their full measurements once. It is saved forever.' },
+              { step: '02', title: 'Create & Track the Order', desc: 'Add the order details, fabric, price, and collection date. Watch it move from New to Ready.' },
+              { step: '03', title: 'Print, Share & Deliver', desc: 'Generate a professional receipt and deliver on time. Your customer will be impressed.' },
+            ].map((item) => (
+              <div key={item.step} className="flex flex-col items-center">
+                <div className="h-16 w-16 rounded-full bg-red-700 flex items-center justify-center text-2xl font-black mb-4">{item.step}</div>
+                <h3 className="font-extrabold text-lg mb-2">{item.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* TAB 4: CUSTOMER PROFILE DETAILS */}
-          {activeTab === 'customer-detail' && selectedCustomer && (
-            <CustomerDetails 
-              customer={selectedCustomer} 
-              onBack={() => handleTabChange('customers')}
-              onEdit={(cust) => {
-                setSelectedCustomer(cust);
-                setActiveTab('edit-customer');
-              }}
-              onAddOrder={(cust) => {
-                // Re-order for existing customer: open dedicated new-order form
-                setSelectedCustomer(cust);
-                setActiveTab('new-order');
-              }}
-              onDelete={handleDeleteCustomer}
-              onSelectOrder={handleSelectOrder}
-            />
-          )}
+      {/* ========== PRICING SECTION ========== */}
+      <section className="py-20 px-6">
+        <div className="max-w-xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Simple, One-Time Pricing</h2>
+          <p className="text-gray-500 text-lg mb-10">One price. Full access. No hidden charges.</p>
+          <div className="relative bg-white border-2 border-red-600 rounded-2xl p-10 shadow-xl">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full text-white bg-red-600">
+              Current Price
+            </span>
+            <p className="text-6xl font-black text-gray-900 mb-1">₦20,000</p>
+            <p className="text-gray-400 text-sm mb-8">One-time setup fee — access for your shop</p>
+            <ul className="space-y-3 text-left mb-10">
+              {[
+                'Unlimited Customers & Measurements',
+                'Full Order Management',
+                'Payment & Balance Tracker',
+                'Collection Reminders',
+                'Professional Print & WhatsApp Receipts',
+                'Customer History & Reports',
+                'Works Offline',
+                'Business Logo & Branding',
+              ].map((feat) => (
+                <li key={feat} className="flex items-start gap-2 text-sm text-gray-600">
+                  <span className="text-green-500 font-bold mt-0.5">✓</span>
+                  {feat}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/auth/request-access"
+              className="block w-full text-center font-bold py-4 rounded-xl bg-red-700 text-white hover:bg-red-800 transition-all text-lg"
+            >
+              Get Started — ₦20,000
+            </Link>
+            <p className="text-gray-400 text-xs mt-4">Pay once · Contact us on WhatsApp to get started</p>
+          </div>
+        </div>
+      </section>
 
-          {/* TAB 4b: NEW ORDER FOR EXISTING CUSTOMER (Re-order flow) */}
-          {activeTab === 'new-order' && selectedCustomer && (
-            <NewOrderForm
-              customer={selectedCustomer}
-              onBack={() => setActiveTab('customer-detail')}
-              onSave={async (payload) => {
-                await handleSaveNewOrder(selectedCustomer.id, payload);
-              }}
-            />
-          )}
+      {/* ========== TESTIMONIAL ========== */}
+      <section className="bg-red-700 text-white py-16 px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="text-3xl font-bold italic leading-snug mb-6">
+            "Since I started using TCMS, I no longer misplace books. My customers trust me more."
+          </p>
+          <p className="text-red-200 font-semibold">— Professional Tailor, Onitsha</p>
+        </div>
+      </section>
 
-          {/* TAB 5: CUSTOMER SUMMARY (PRINT VIEW) */}
-          {activeTab === 'summary' && selectedOrder && (
-            <CustomerSummary 
-              order={selectedOrder} 
-              onBack={() => {
-                if (selectedCustomer) {
-                  setActiveTab('customer-detail');
-                } else {
-                  handleTabChange('dashboard');
-                }
-              }}
-              onEditOrder={(order) => {
-                // TODO: future edit order form
-              }}
-              businessSettings={businessSettings}
-            />
-          )}
+      {/* ========== FAQ SECTION ========== */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-10">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full text-left px-6 py-4 font-bold text-gray-800 flex justify-between items-center hover:bg-gray-50 transition-colors"
+                >
+                  {faq.q}
+                  <span className={`text-red-600 text-xl transition-transform ${openFaq === i ? 'rotate-45' : ''}`}>+</span>
+                </button>
+                {openFaq === i && (
+                  <div className="px-6 pb-5 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-4">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* TAB 6: REMINDER DASHBOARD */}
-          {activeTab === 'reminders' && (
-            <Reminders onSelectOrder={handleSelectOrder} />
-          )}
+      {/* ========== FINAL CTA ========== */}
+      <section className="bg-gray-950 text-white py-24 px-6 text-center">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-4">Ready to Digitize Your Shop?</h2>
+        <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
+          Join tailors across Nigeria who are using KowaGuru TCMS to grow their business and impress their customers.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            href="/auth/request-access"
+            className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-10 py-4 rounded-2xl text-lg shadow-2xl shadow-red-900/50 transition-all hover:-translate-y-0.5"
+          >
+            ✂️ Start Using for Free Today
+          </Link>
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-10 py-4 rounded-2xl text-lg border border-white/20 transition-all"
+          >
+            Already have an account? Login
+          </Link>
+        </div>
+      </section>
 
-          {/* TAB 7: REPORTS */}
-          {activeTab === 'reports' && (
-            <Reports stats={stats} />
-          )}
-
-          {/* TAB 8: SETTINGS */}
-          {activeTab === 'settings' && (
-            <Settings 
-              initialSettings={businessSettings} 
-              onSaveSettings={handleSaveSettings}
-              isFirstRun={isFirstRun}
-              onCompleteSetup={() => setIsFirstRun(false)}
-            />
-          )}
-
-        </main>
-      </div>
-
-      {/* 4. SOFTWARE FOOTER */}
-      <footer className="w-full text-center py-4 text-xs font-semibold text-gray-400 no-print">
-        Powered by Kowaguru TCMS © 2026
+      {/* ========== FOOTER ========== */}
+      <footer className="bg-gray-950 border-t border-white/5 px-6 py-8 text-center">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <div className="h-8 w-8 bg-red-700 rounded-xl flex items-center justify-center">
+            <span className="text-white text-base font-bold font-serif">K</span>
+          </div>
+          <span className="text-white font-extrabold">KowaGuru TCMS</span>
+        </div>
+        <p className="text-gray-500 text-sm mb-2">The Digital Tailor Management System</p>
+        <p className="text-gray-600 text-xs">
+          © 2026 KowaGuru Technology Limited · <a href="https://wa.me/2348023603283" className="hover:text-gray-400 transition-colors">WhatsApp Support</a> · tcms.kowagurutech.ng
+        </p>
       </footer>
 
-      {/* Floating WhatsApp Support Button */}
-      <a 
-        href="https://wa.me/2348023603283" 
-        target="_blank" 
+      {/* ========== FLOATING WHATSAPP ========== */}
+      <a
+        href="https://wa.me/2348023603283"
+        target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg z-50 flex items-center justify-center transition-transform hover:scale-110 no-print"
+        className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl z-50 flex items-center justify-center transition-transform hover:scale-110"
         aria-label="Contact Support on WhatsApp"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.989.574 3.842 1.563 5.408L2 22l4.763-1.528A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 11.999 2zm.001 18a7.96 7.96 0 0 1-4.062-1.11l-.292-.173-3.006.964.981-2.924-.19-.3A7.96 7.96 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
       </a>
     </div>
   );

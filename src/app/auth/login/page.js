@@ -67,7 +67,7 @@ export default function LoginPage() {
         if (data.user?.role === 'SUPER_ADMIN') {
           window.location.href = '/super-admin';
         } else {
-          window.location.href = '/'; // Force full reload to update state
+          window.location.href = '/dashboard'; // Redirect to tailor dashboard
         }
       } else {
         setError(data.error || 'Failed to login');
