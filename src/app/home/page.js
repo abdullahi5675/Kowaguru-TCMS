@@ -79,16 +79,52 @@ export default function LandingPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-gray-800 font-sans relative">
       {/* ========== NAVBAR ========== */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 px-6 py-4 flex items-center justify-between shadow-sm transition-all duration-300">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={scrollToTop}>
           <div className="h-9 w-9 bg-red-700 rounded-xl flex items-center justify-center shadow">
             <span className="text-white text-lg font-bold font-serif">K</span>
           </div>
           <span className="font-extrabold text-gray-900 text-lg tracking-tight">KowaGuru TCMS</span>
         </div>
+
+        {/* Smooth Navigation Links */}
+        <div className="hidden md:flex items-center gap-8">
+          <button
+            onClick={() => scrollToSection('features')}
+            className="text-sm font-semibold text-gray-600 hover:text-red-700 transition-colors"
+          >
+            Features
+          </button>
+          <button
+            onClick={() => scrollToSection('how-it-works')}
+            className="text-sm font-semibold text-gray-600 hover:text-red-700 transition-colors"
+          >
+            How It Works
+          </button>
+          <button
+            onClick={() => scrollToSection('pricing')}
+            className="text-sm font-semibold text-gray-600 hover:text-red-700 transition-colors"
+          >
+            Pricing
+          </button>
+          <button
+            onClick={() => scrollToSection('faq')}
+            className="text-sm font-semibold text-gray-600 hover:text-red-700 transition-colors"
+          >
+            FAQ
+          </button>
+        </div>
+
         <div className="flex items-center gap-3">
           <Link
             href="/auth/login"
@@ -98,6 +134,22 @@ export default function LandingPage() {
           </Link>
         </div>
       </nav>
+
+      {/* Mobile Sub-Navbar Links */}
+      <div className="md:hidden flex items-center justify-around bg-gray-50 border-b border-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-600 sticky top-[69px] z-40">
+        <button onClick={() => scrollToSection('features')} className="hover:text-red-700 transition-colors">
+          Features
+        </button>
+        <button onClick={() => scrollToSection('how-it-works')} className="hover:text-red-700 transition-colors">
+          How It Works
+        </button>
+        <button onClick={() => scrollToSection('pricing')} className="hover:text-red-700 transition-colors">
+          Pricing
+        </button>
+        <button onClick={() => scrollToSection('faq')} className="hover:text-red-700 transition-colors">
+          FAQ
+        </button>
+      </div>
 
       {/* ========== HERO SECTION ========== */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-red-950 to-gray-900 text-white">
@@ -151,7 +203,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== FEATURES SECTION ========== */}
-      <section className="py-20 px-6">
+      <section id="features" className="py-20 px-6 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900">Everything Your Shop Needs</h2>
@@ -170,7 +222,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== HOW IT WORKS ========== */}
-      <section className="bg-gray-950 text-white py-20 px-6">
+      <section id="how-it-works" className="bg-gray-950 text-white py-20 px-6 scroll-mt-20">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold mb-12">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -190,7 +242,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== PRICING SECTION ========== */}
-      <section className="py-20 px-6">
+      <section id="pricing" className="py-20 px-6 scroll-mt-20">
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Simple, One-Time Pricing</h2>
           <p className="text-gray-500 text-lg mb-10">One price. Full access. No hidden charges.</p>
@@ -239,7 +291,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== FAQ SECTION ========== */}
-      <section className="py-20 px-6 bg-gray-50">
+      <section id="faq" className="py-20 px-6 bg-gray-50 scroll-mt-20">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-10">Frequently Asked Questions</h2>
           <div className="space-y-3">
