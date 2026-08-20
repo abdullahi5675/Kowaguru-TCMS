@@ -154,10 +154,10 @@ export default function LandingPage() {
       {/* ========== HERO SECTION ========== */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-red-950 to-gray-900 text-white">
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-luminosity pointer-events-none" 
+          className="absolute inset-0 bg-cover bg-center opacity-45 mix-blend-overlay pointer-events-none" 
           style={{ backgroundImage: 'url("/hero-bg.webp")' }} 
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-950/50 to-gray-950/30 pointer-events-none" />
         <div className="absolute inset-0 opacity-20" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, #b91c1c 0%, transparent 50%), radial-gradient(circle at 80% 20%, #15803d 0%, transparent 50%)'}} />
         <div className="relative max-w-5xl mx-auto px-6 py-24 md:py-36 text-center">
           <span className="inline-block bg-red-700/30 border border-red-500/30 text-red-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
