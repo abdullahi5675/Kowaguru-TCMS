@@ -6,7 +6,8 @@ export async function GET(request, { params }) {
     const userId = parseInt(request.headers.get('x-user-id'), 10);
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams?.id, 10);
 
     if (isNaN(id)) {
       return NextResponse.json({ error: 'Invalid Customer ID.' }, { status: 400 });

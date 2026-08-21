@@ -17,8 +17,9 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const clientId = parseInt(params.id, 10);
-    if (!clientId) {
+    const resolvedParams = await params;
+    const clientId = parseInt(resolvedParams?.id, 10);
+    if (!clientId || isNaN(clientId)) {
       return NextResponse.json({ error: 'Invalid client ID' }, { status: 400 });
     }
 
