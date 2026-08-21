@@ -152,13 +152,16 @@ export default function LandingPage() {
       </div>
 
       {/* ========== HERO SECTION ========== */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-red-950 to-gray-900 text-white">
+      <section className="relative overflow-hidden text-white" style={{ minHeight: '100vh' }}>
+        {/* Tailor photo background — clearly visible, not deep */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-45 mix-blend-overlay pointer-events-none" 
-          style={{ backgroundImage: 'url("/hero-bg.webp")' }} 
+          className="absolute inset-0 bg-cover bg-center pointer-events-none"
+          style={{ backgroundImage: 'url("/tailor.jpg")', backgroundPosition: 'center top' }} 
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-950/50 to-gray-950/30 pointer-events-none" />
-        <div className="absolute inset-0 opacity-20" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, #b91c1c 0%, transparent 50%), radial-gradient(circle at 80% 20%, #15803d 0%, transparent 50%)'}} />
+        {/* Light semi-transparent overlay — shows the photo but keeps text readable */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(10,10,10,0.62) 0%, rgba(90,10,10,0.52) 50%, rgba(10,10,10,0.60) 100%)' }} />
+        {/* Bottom fade for smooth section transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.7))' }} />
         <div className="relative max-w-5xl mx-auto px-6 py-24 md:py-36 text-center">
           <span className="inline-block bg-red-700/30 border border-red-500/30 text-red-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             🇳🇬 Built for Nigerian Tailors
