@@ -153,10 +153,10 @@ export default function LandingPage() {
 
       {/* ========== HERO SECTION ========== */}
       <section className="relative overflow-hidden text-white" style={{ minHeight: '100vh' }}>
-        {/* Tailor photo background — clearly visible, not deep */}
+        {/* Tailor photo background — using uploaded photo 1 */}
         <div 
           className="absolute inset-0 bg-cover bg-center pointer-events-none"
-          style={{ backgroundImage: 'url("/tailor.jpg")', backgroundPosition: 'center top' }} 
+          style={{ backgroundImage: 'url("/IMG-20260821-WA0050.jpg")', backgroundPosition: 'center top' }} 
         />
         {/* Light semi-transparent overlay — shows the photo but keeps text readable */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(10,10,10,0.62) 0%, rgba(90,10,10,0.52) 50%, rgba(10,10,10,0.60) 100%)' }} />
@@ -284,12 +284,17 @@ export default function LandingPage() {
       </section>
 
       {/* ========== TESTIMONIAL ========== */}
-      <section className="bg-red-700 text-white py-16 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-3xl font-bold italic leading-snug mb-6">
-            "Since I started using TCMS, I no longer misplace books. My customers trust me more."
+      <section className="relative overflow-hidden text-white py-20 px-6 bg-red-950">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none" 
+          style={{ backgroundImage: 'url("/IMG-20260821-WA0051.jpg")' }} 
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-red-950/90 via-red-950/70 to-red-950/90 pointer-events-none" />
+        <div className="relative max-w-2xl mx-auto text-center">
+          <p className="text-2xl md:text-3xl font-bold italic leading-relaxed mb-6">
+            &quot;Since I started using TCMS, I no longer misplace books or customer measurements. My customers trust me more.&quot;
           </p>
-          <p className="text-red-200 font-semibold">— Professional Tailor, Onitsha</p>
+          <p className="text-red-300 font-semibold">— Professional Tailor, Nigeria</p>
         </div>
       </section>
 

@@ -23,7 +23,7 @@ export async function POST(request) {
     }
 
     // Block deleted/deactivated accounts from logging in
-    if (user.isDeleted) {
+    if (user?.isDeleted === true) {
       return NextResponse.json({ error: 'Your account has been deactivated. Please contact support to restore access.' }, { status: 403 });
     }
 
