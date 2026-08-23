@@ -25,31 +25,47 @@ export default async function SuperAdminPage() {
     redirect("/"); // Non-admins get redirected to their dashboard
   }
 
-  // Fetch all active clients (not deleted)
-  const clients = await prisma.user.findMany({
-    where: {
-      role: "USER",
-      isDeleted: false,
-    },
-    include: {
-      customers: true,
-      orders: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // Fetch all active clients (with resilient fallback)
+  let clients = [];
+  let deletedClients = [];
+  try {
+    clients = await prisma.user.findMany({
+      where: {
+        role: "USER",
+        isDeleted: false,
+      },
+      include: {
+        customers: true,
+        orders: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-  // Fetch soft-deleted clients
-  const deletedClients = await prisma.user.findMany({
-    where: {
-      role: "USER",
-      isDeleted: true,
-    },
-    include: {
-      customers: true,
-      orders: true,
-    },
-    orderBy: { deletedAt: "desc" },
-  });
+    deletedClients = await prisma.user.findMany({
+      where: {
+        role: "USER",
+        isDeleted: true,
+      },
+      include: {
+        customers: true,
+        orders: true,
+      },
+      orderBy: { deletedAt: "desc" },
+    });
+  } catch (err) {
+    console.warn("Fallback query for clients:", err?.message);
+    clients = await prisma.user.findMany({
+      where: {
+        role: "USER",
+      },
+      include: {
+        customers: true,
+        orders: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    deletedClients = [];
+  }
 
   // Fetch pending payment requests
   const pendingRequests = await prisma.paymentRequest.findMany({

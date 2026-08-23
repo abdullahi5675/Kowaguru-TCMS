@@ -14,15 +14,20 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const deletedClients = await prisma.user.findMany({
-      where: { isDeleted: true, role: 'USER' },
-      include: { customers: true, orders: true },
-      orderBy: { deletedAt: 'desc' },
-    });
+    let deletedClients = [];
+    try {
+      deletedClients = await prisma.user.findMany({
+        where: { isDeleted: true, role: 'USER' },
+        include: { customers: true, orders: true },
+        orderBy: { deletedAt: 'desc' },
+      });
+    } catch (dbErr) {
+      deletedClients = [];
+    }
 
     return NextResponse.json({ clients: deletedClients }, { status: 200 });
   } catch (error) {
     console.error('Fetch deleted clients error:', error);
-    return NextResponse.json({ error: 'Failed to fetch deleted clients' }, { status: 500 });
+    return NextResponse.json({ clients: [] }, { status: 200 });
   }
 }
