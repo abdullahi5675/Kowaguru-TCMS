@@ -110,13 +110,13 @@ export async function POST(request) {
 
               <p style="font-size: 16px; color: #374151; font-weight: bold;">Important Next Steps:</p>
               <ol style="color: #374151;">
-                <li>Log in to the system at <a href="https://kowaguru-tcms.vercel.app">kowaguru-tcms.vercel.app</a></li>
+                <li>Log in to the system at <a href="https://tcms.kowagurutech.ng">tcms.kowagurutech.ng</a></li>
                 <li>Go to <strong>Settings</strong> to update your Shop Name, Address, and Phone Number.</li>
                 <li>Go to your <strong>Profile</strong> (top right menu) to change this temporary password to a secure one of your choice.</li>
               </ol>
 
               <div style="text-align: center; margin-top: 30px;">
-                <a href="https://kowaguru-tcms.vercel.app/auth/login" style="background-color: #b91c1c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Login Now</a>
+                <a href="https://tcms.kowagurutech.ng/auth/login" style="background-color: #b91c1c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Login Now</a>
               </div>
             </div>
             <div style="background-color: #f3f4f6; padding: 15px; text-align: center; border-top: 1px solid #e5e7eb;">

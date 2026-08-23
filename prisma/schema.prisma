@@ -18,6 +18,8 @@ model User {
   name      String
   shopName  String?
   role      String   @default("USER") // USER or SUPER_ADMIN
+  isDeleted Boolean  @default(false)  // Soft delete flag — blocks login
+  deletedAt DateTime?                 // When soft-deleted (null = active)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

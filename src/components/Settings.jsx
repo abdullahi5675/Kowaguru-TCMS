@@ -154,16 +154,16 @@ export default function Settings({ initialSettings = null, onSaveSettings, isFir
   return (
     <div className="space-y-6">
       {isFirstRun && (
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-900/50 p-4 rounded-xl flex items-start gap-4">
-          <div className="bg-red-100 dark:bg-red-950 p-2 rounded-lg text-red-700 dark:text-red-400">
+        <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-900/50 p-4 rounded-xl flex items-start gap-4">
+          <div className="bg-green-100 dark:bg-green-950 p-2 rounded-lg text-green-700 dark:text-green-400">
             <CheckCircle2 size={24} />
           </div>
           <div>
-            <h3 className="text-red-900 dark:text-red-300 font-bold text-lg">Welcome to Kowaguru TCMS!</h3>
-            <p className="text-red-700 dark:text-red-400 text-sm mt-1">
+            <h3 className="text-green-900 dark:text-green-300 font-bold text-lg">Welcome to Kowaguru TCMS!</h3>
+            <p className="text-green-700 dark:text-green-400 text-sm mt-1">
               Before you can start managing your tailoring shop, please set up your Business Identity below. 
               We also highly recommend updating your security settings by changing your temporary password on the right side.
-              Once you click "Save Settings", your dashboard will be unlocked!
+              Once you click &quot;Save Settings&quot;, your dashboard will be unlocked!
             </p>
           </div>
         </div>

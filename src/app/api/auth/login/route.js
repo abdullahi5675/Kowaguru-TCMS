@@ -22,6 +22,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    // Block deleted/deactivated accounts from logging in
+    if (user.isDeleted) {
+      return NextResponse.json({ error: 'Your account has been deactivated. Please contact support to restore access.' }, { status: 403 });
+    }
+
     // Verify password
     const passwordMatch = await bcrypt.compare(password, user.password);
 

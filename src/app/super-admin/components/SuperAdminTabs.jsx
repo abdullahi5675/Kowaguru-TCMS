@@ -3,9 +3,10 @@
 import { useState } from "react";
 import ClientList from "./ClientList";
 import PendingApprovals from "./PendingApprovals";
+import DeletedClients from "./DeletedClients";
 
-export default function SuperAdminTabs({ initialClients, initialRequests }) {
-  const [activeTab, setActiveTab] = useState("clients"); // 'clients' or 'pending'
+export default function SuperAdminTabs({ initialClients, initialRequests, initialDeletedClients }) {
+  const [activeTab, setActiveTab] = useState("clients");
 
   return (
     <div>
@@ -21,7 +22,11 @@ export default function SuperAdminTabs({ initialClients, initialRequests }) {
               } whitespace-nowrap py-4 px-1 border-b-2 font-bold text-lg transition-colors`}
             >
               Active Clients
+              <span className="ml-2 bg-green-100 text-green-800 py-0.5 px-2 rounded-full text-xs font-medium">
+                {initialClients.length}
+              </span>
             </button>
+
             <button
               onClick={() => setActiveTab("pending")}
               className={`${
@@ -37,12 +42,29 @@ export default function SuperAdminTabs({ initialClients, initialRequests }) {
                 </span>
               )}
             </button>
+
+            <button
+              onClick={() => setActiveTab("deleted")}
+              className={`${
+                activeTab === "deleted"
+                  ? "border-gray-500 text-gray-700"
+                  : "border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-300"
+              } whitespace-nowrap py-4 px-1 border-b-2 font-bold text-lg transition-colors flex items-center`}
+            >
+              🗑️ Deleted Accounts
+              {initialDeletedClients.length > 0 && (
+                <span className="ml-2 bg-red-100 text-red-700 py-0.5 px-2.5 rounded-full text-xs font-medium">
+                  {initialDeletedClients.length}
+                </span>
+              )}
+            </button>
           </nav>
         </div>
       </div>
 
       {activeTab === "clients" && <ClientList initialClients={initialClients} />}
       {activeTab === "pending" && <PendingApprovals initialRequests={initialRequests} />}
+      {activeTab === "deleted" && <DeletedClients initialDeletedClients={initialDeletedClients} />}
     </div>
   );
 }

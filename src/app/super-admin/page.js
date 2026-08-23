@@ -25,20 +25,32 @@ export default async function SuperAdminPage() {
     redirect("/"); // Non-admins get redirected to their dashboard
   }
 
-  // Fetch all users/clients
+  // Fetch all active clients (not deleted)
   const clients = await prisma.user.findMany({
     where: {
-      role: "USER", // Don't show admins in the client list
+      role: "USER",
+      isDeleted: false,
     },
     include: {
-      customers: true, // to show some stats
+      customers: true,
       orders: true,
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
   });
-  
+
+  // Fetch soft-deleted clients
+  const deletedClients = await prisma.user.findMany({
+    where: {
+      role: "USER",
+      isDeleted: true,
+    },
+    include: {
+      customers: true,
+      orders: true,
+    },
+    orderBy: { deletedAt: "desc" },
+  });
+
   // Fetch pending payment requests
   const pendingRequests = await prisma.paymentRequest.findMany({
     where: { status: 'PENDING' },
@@ -123,7 +135,8 @@ export default async function SuperAdminPage() {
 
         <SuperAdminTabs 
           initialClients={clients} 
-          initialRequests={pendingRequests} 
+          initialRequests={pendingRequests}
+          initialDeletedClients={deletedClients}
         />
       </div>
     </div>
