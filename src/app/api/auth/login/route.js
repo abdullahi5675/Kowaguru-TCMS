@@ -13,10 +13,26 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing email or password' }, { status: 400 });
     }
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
+    // Find user safely (with fallback if schema migration is pending)
+    let user;
+    try {
+      user = await prisma.user.findUnique({
+        where: { email }
+      });
+    } catch (dbErr) {
+      console.warn('Prisma query fallback for login:', dbErr?.message);
+      user = await prisma.user.findFirst({
+        where: { email },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          name: true,
+          shopName: true,
+          role: true,
+        }
+      });
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
