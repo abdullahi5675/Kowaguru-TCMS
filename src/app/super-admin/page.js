@@ -54,16 +54,28 @@ export default async function SuperAdminPage() {
     });
   } catch (err) {
     console.warn("Fallback query for clients:", err?.message);
-    clients = await prisma.user.findMany({
-      where: {
-        role: "USER",
-      },
-      include: {
-        customers: true,
-        orders: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    try {
+      clients = await prisma.user.findMany({
+        where: {
+          role: "USER",
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          shopName: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          customers: true,
+          orders: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    } catch (e) {
+      console.error("Critical fallback failed:", e);
+      clients = [];
+    }
     deletedClients = [];
   }
 
