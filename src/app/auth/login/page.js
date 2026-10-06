@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -14,12 +13,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
+  // Forgot Password Modal States
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState('');
+
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
       
-      // Automatically prompt the user to install
       setTimeout(() => {
         e.prompt();
         e.userChoice.then((choiceResult) => {
@@ -28,7 +33,7 @@ export default function LoginPage() {
           }
           setDeferredPrompt(null);
         });
-      }, 1000); // 1 second delay to let page load first
+      }, 1000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -40,12 +45,9 @@ export default function LoginPage() {
 
   const handleInstallPWA = async () => {
     if (!deferredPrompt) return;
-    // Show the install prompt
     deferredPrompt.prompt();
-    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
     console.log(`User response to the install prompt: ${outcome}`);
-    // We've used the prompt, and can't use it again, throw it away
     setDeferredPrompt(null);
   };
 
@@ -67,7 +69,7 @@ export default function LoginPage() {
         if (data.user?.role === 'SUPER_ADMIN') {
           window.location.href = '/super-admin';
         } else {
-          window.location.href = '/dashboard'; // Redirect to tailor dashboard
+          window.location.href = '/dashboard';
         }
       } else {
         setError(data.error || 'Failed to login');
@@ -77,6 +79,40 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setForgotError('');
+    setForgotSuccess('');
+    setForgotLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setForgotSuccess(data.message || 'A new temporary password has been sent to your email address.');
+      } else {
+        setForgotError(data.error || 'Failed to reset password');
+      }
+    } catch (err) {
+      setForgotError('An error occurred. Please try again.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const openForgotModal = () => {
+    setForgotEmail(email); // Pre-fill with login email if user typed it
+    setForgotError('');
+    setForgotSuccess('');
+    setIsForgotModalOpen(true);
   };
 
   return (
@@ -160,9 +196,18 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={openForgotModal}
+                  className="text-xs font-semibold text-red-600 hover:text-red-700 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -216,6 +261,101 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {isForgotModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 animate-in fade-in zoom-in duration-200">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-red-50 text-red-700 rounded-xl">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Reset Password</h3>
+                  <p className="text-xs text-gray-500">We'll email you a temporary password</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsForgotModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 text-lg font-bold p-1 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {forgotSuccess ? (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 text-green-800 text-sm p-4 rounded-xl flex items-start gap-3">
+                  <span className="text-lg">✅</span>
+                  <div>
+                    <p className="font-bold">Password Reset Email Sent!</p>
+                    <p className="text-xs text-green-700 mt-1">{forgotSuccess}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotModalOpen(false)}
+                  className="w-full py-3 bg-red-700 hover:bg-red-800 text-white font-bold rounded-xl text-sm transition-all"
+                >
+                  Back to Sign In
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                {forgotError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-xl">
+                    ⚠️ {forgotError}
+                  </div>
+                )}
+
+                <div>
+                  <label htmlFor="forgotEmail" className="block text-xs font-semibold text-gray-700 mb-1">
+                    Enter your registered Email Address
+                  </label>
+                  <input
+                    id="forgotEmail"
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                    placeholder="tailor@example.com"
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-end pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotModalOpen(false)}
+                    className="px-4 py-2.5 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="px-5 py-2.5 text-xs font-bold text-white bg-red-700 hover:bg-red-800 rounded-xl transition-all disabled:opacity-50 inline-flex items-center gap-2 shadow-sm"
+                  >
+                    {forgotLoading ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Sending Email...
+                      </>
+                    ) : (
+                      'Send Temporary Password'
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Floating WhatsApp Support Button */}
       <a 
         href="https://wa.me/2348023603283" 
