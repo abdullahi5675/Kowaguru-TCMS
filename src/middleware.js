@@ -12,6 +12,7 @@ export async function middleware(request) {
                         pathname === '/home' ||
                         pathname === '/api/auth/login' || 
                         pathname === '/api/auth/register' ||
+                        pathname === '/api/auth/forgot-password' ||
                         pathname.startsWith('/api/public') ||
                         pathname.startsWith('/api/upload');
 
